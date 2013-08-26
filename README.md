@@ -1,5 +1,5 @@
-A small visual qMD implementation 
-by Jochen Gerhard 
+A small visual qMD implementation by Jochen Gerhard 
+
 Advisor: Marcus Bleicher
 
 Code simulates a number of colour charges (partons) with constant force
