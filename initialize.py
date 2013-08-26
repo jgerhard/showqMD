@@ -8,7 +8,7 @@ def create_anti(particle):
     return [1 - x for x in particle[:-1]] + [1]
 
 def fountain_np(num):
-    """numpy way of initializing data using ufuncs instead of loops"""
+    """ initialize 400 baryons and 500 mesons with 300 MeV energy """
 
     # Initial position of quarks
     pos = numpy.ndarray((num, 4), dtype=numpy.float32)
