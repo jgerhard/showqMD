@@ -11,7 +11,7 @@ import glutil
 from vector import Vec
 
 #OpenCL code
-import part2
+import physics
 #functions for initial values of particles
 import initialize
 
@@ -55,7 +55,7 @@ class window(object):
         #set up initial conditions
         (pos_vbo, col_vbo, vel) = initialize.fountain(num)
         #create our OpenCL instance
-        self.cle = part2.Part2(num, dt)
+        self.cle = physics.Particles(num, dt)
         self.cle.loadData(pos_vbo, col_vbo, vel)
 
         glutMainLoop()

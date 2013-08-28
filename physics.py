@@ -7,10 +7,10 @@ import sys
 import numpy
 
 
-class Part2(object):
+class Particles(object):
     def __init__(self, num, dt, *args, **kwargs):
         self.clinit()
-        self.loadProgram("part2.cl");
+        self.loadProgram("cornell.cl");
         self.totaltime = 0.0
         self.num = num
         self.num_cl = numpy.uint32(num)
