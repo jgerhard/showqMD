@@ -27,20 +27,6 @@ inline float cornell(float4 my_color, float4 its_color)
 
 }  
 
-inline float screened_cornell(float4 my_color, float4 its_color, float4 my_pos, float4 its_pos, const float mean){
-  if (fast_distance(my_pos, its_pos) <= WIDTH * mean)
-    return cornell(my_color, its_color);
-  return 0.f;
-}
-  
-inline float gravity(float4 my_pos, float4 its_pos)
-{
-  const float4 d = my_pos - its_pos;
-  const float invroot = rsqrt(d.x*d.x + d.y * d.y + d.z * d.z+EPS);
-  return -(invroot*invroot*invroot);
-}
-      
-
 __kernel void nbody(__global float4* pos_old, 
                     __global float4* vel_old,
                     __global float4* pos_new,
@@ -76,8 +62,6 @@ __kernel void nbody(__global float4* pos_old,
     other_pos.w = 0.f;
     const float4 other_col = color[j];
     force += PROP * normalize(p - other_pos) * ( cornell(c, other_col) );//+ log(length(p-other_pos)+EPS) );
-    //force += PROP * normalize(p - other_pos) * ( screened_cornell(c, other_col, p, other_pos, mean) );// - log(length(p-other_pos)+EPS) );
-    //acc += gravity(p, other_pos) * (p-other_pos);
   }
 
   p_neu = (mass * v * 1.f/sqrt(EPS+1.f - length(v)*length(v)))+(force * dt * 0.5f);
@@ -98,9 +82,6 @@ __kernel void nbody(__global float4* pos_old,
     other_pos.w = 0.f;
     const float4 other_col = color[j];
     force += PROP * normalize(p - other_pos) * ( cornell(c, other_col));// + log(length(p-other_pos)+EPS) );
-    //    force += PROP * normalize(p - other_pos) * ( screened_cornell(c, other_col, p, other_pos, mean) );// log(length(p-other_pos)+EPS) );
-    //  acc += gravity(p, other_pos) * (p-other_pos);
-    
   }
   p_neu = (mass * v * 1.f/sqrt(EPS+1.f - length(v)*length(v)))+(force * dt);
   
