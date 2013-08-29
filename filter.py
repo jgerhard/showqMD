@@ -9,7 +9,6 @@ def readfile(filename, header=True):
     for line in file: flist.append(line)
     events=[]
     single_event=[]
-    numofevents = 0
     while flist:
         stri = flist.pop()
         single_event.append(stri)
@@ -20,13 +19,13 @@ def readfile(filename, header=True):
             else:
                 events.append(single_event[16:])
             single_event=[]
-            numofevents += 1
     events.reverse()
-    return numofevents, events
+    return events
 
 
 
 if __name__ == "__main__":
-    num, liste = readfile("test.f14",header=False)
-    print("Number of events: %d"%num)
-    pprint(liste)
+#    hadrons = range(1,27) + [101, 104] # want N*, \Delta, \pi and \rho
+    hadrons = [1,101, 104]           # consider only n, \pi^0, and \rho^0  (no charge in qMD)
+    liste = readfile("test.f14",header=False)
+    pprint(filter(lambda(line): int(line.split()[9])in hadrons, liste[0]))
