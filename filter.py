@@ -1,5 +1,5 @@
 import numpy as np
-import pprint
+from pprint import pprint
 
 def readfile(filename, header=True):
     """ Reads all lines in UrQMD f14-file and generates
@@ -15,7 +15,10 @@ def readfile(filename, header=True):
         single_event.append(stri)
         if (stri.split()[0]=="UQMD"):
             single_event.reverse()
-            events.append(single_event)
+            if header:
+                events.append(single_event)
+            else:
+                events.append(single_event[16:])
             single_event=[]
             numofevents += 1
     events.reverse()
@@ -23,7 +26,7 @@ def readfile(filename, header=True):
 
 
 
-if __name__ = "__main__":
-    num, liste = readfile("test.f14")
-    print("Number of events %d", num)
+if __name__ == "__main__":
+    num, liste = readfile("test.f14",header=False)
+    print("Number of events: %d"%num)
     pprint(liste)
