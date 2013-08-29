@@ -24,8 +24,24 @@ def readfile(filename, header=True):
 
 
 
+def separate_hadrons(event):
+    """ Takes one event and seperates baryons from mesons """
+
+    meson_itypes = [101, 104]           # consider only \pi^0 and \rho^0  (no charge in qMD)
+    baryon_itypes = [1]                 # range(1,27) 
+
+    mesons_strings = filter(lambda(line): int(line.split()[9])in meson_itypes and int(line.split()[11])==0, event)
+    baryons_strings = filter(lambda(line): int(line.split()[9])in baryon_itypes and int(line.split()[11])==0, event)
+    
+    mesons = [map(lambda(x): float(x), line.split()) for line in mesons_strings]
+    baryons = [map(lambda(x): float(x), line.split()) for line in baryons_strings]
+
+    return baryons, mesons
+    
+
+    
 if __name__ == "__main__":
-#    hadrons = range(1,27) + [101, 104] # want N*, \Delta, \pi and \rho
-    hadrons = [1,101, 104]           # consider only n, \pi^0, and \rho^0  (no charge in qMD)
     liste = readfile("test.f14",header=False)
-    pprint(filter(lambda(line): int(line.split()[9])in hadrons, liste[0]))
+    baryons, mesons = separate_hadrons(liste[0])
+    
+    pprint(baryons)
