@@ -1,5 +1,6 @@
 import numpy as np
 from pprint import pprint
+from lorentz import lorentz
 
 def readfile(filename, header=True):
     """ Reads all lines in UrQMD f14-file and generates
@@ -46,5 +47,8 @@ def separate_hadrons(event):
 if __name__ == "__main__":
     liste = readfile("test.f14",header=False)
     baryons, mesons = separate_hadrons(liste[0])
-    
-    pprint(mesons)
+    p_cf = np.array(mesons[0][3:7])
+    v_rel = p_cf[1:] / p_cf[0]
+    pprint(p_cf)
+    p_lrf = lorentz(v_rel, p_cf)
+    pprint(p_lrf)
