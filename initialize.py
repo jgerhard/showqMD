@@ -5,23 +5,31 @@ from UrQMDfilter import readfile, separate_hadrons, make_partonlist
 
 
 
-def fountain_urqmd(maxnum = 220, filename="test.f14", eventnumber=0, parton_mass = 0.01):
+def fountain_urqmd(maxnum , filename="test.f14", eventnumber=0, parton_mass = 0.01):
     """ Create partons from UrQMD inputfile "filename"
     if number exeeds maxnum only pass maxnum particles """
 
     events = readfile("test.f14",header=False)
     baryons, mesons = separate_hadrons(events[eventnumber]) 
 
+    print(" ")
+    print("Using UrQMD Inputfile")
+    print("Inputfile has %d baryons"%len(baryons))    
+    print("Inputfile has %d mesons"%len(mesons))
+    print("---------------------------")
+
     # reduce number of particles if too many to handle
     # only white combinations are created though
     while (3 * len(baryons) + 2 * len(mesons)) > maxnum:
-        baryons = baryons[: len(baryons)/2]
-        mesons = mesons[: len(mesons)/2]
-    
+        baryons = baryons[: 9 * len(baryons)/10]
+        mesons = mesons[: 9 * len(mesons)/10]
     partons = make_partonlist(baryons, mesons)
-    del events
-    del baryons
-    del mesons
+
+    print("Processing: %d baryons"%len(baryons))
+    print("Processing: %d mesons"%len(mesons))
+    print("Processing total: %d partons"%len(partons))
+    print("Increase maxnum...")
+    print(" ")
 
     pos = np.ndarray((len(partons), 4), dtype=np.float32)
     mom = np.ndarray((len(partons), 4), dtype=np.float32)
@@ -32,7 +40,7 @@ def fountain_urqmd(maxnum = 220, filename="test.f14", eventnumber=0, parton_mass
         col[i] = partons[i][2]
                      
     vel = np.array(map(lambda x, y: x / y, mom,  np.sqrt(parton_mass**2 + np.array(map(lambda(x): x.dot(x), mom)))), dtype=np.float32)
-    vel[:,3] =  parton_mass 
+    vel[:,3] =  parton_mass
 
     return pos, col, vel
 

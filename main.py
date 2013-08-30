@@ -16,9 +16,9 @@ import physics
 import initialize
 
 #number of particles
-num = 220 #*10
+maxnum = 500 #*10
 #time step for integration
-dt = 1e-4
+dt = 1e-2
 
 class window(object):
     def __init__(self, *args, **kwargs):
@@ -53,7 +53,8 @@ class window(object):
         self.glinit()
 
         #set up initial conditions
-        (pos_vbo, col_vbo, vel) = initialize.fountain(num)
+        (pos_vbo, col_vbo, vel) = initialize.fountain(maxnum)
+        num = len(vel)
         #create our OpenCL instance
         self.cle = physics.Particles(num, dt)
         self.cle.loadData(pos_vbo, col_vbo, vel)

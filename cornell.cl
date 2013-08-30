@@ -1,5 +1,5 @@
 //#pragma OPENCL EXTENSION cl_khr_fp64 : enable
-#define PROP (3*0.87f)                      /* \kappa from Regge trajectories */
+#define PROP (3 * .87f)                      /* \kappa from Regge trajectories */
 #define EPS 1e-5f
 
 /*----------------------------------------------------------------------

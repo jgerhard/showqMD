@@ -6,7 +6,6 @@ import pyopencl as cl
 import sys
 import numpy
 
-
 class Particles(object):
     def __init__(self, num, dt, *args, **kwargs):
         self.clinit()
@@ -57,7 +56,13 @@ class Particles(object):
         cl.enqueue_acquire_gl_objects(self.queue, self.gl_objects)
 
         global_size = (self.num,)
-        local_size_threads = 22  # group size
+        local_size_threads = 1  # group size
+        if (self.num % 2 == 0):
+            local_size_threads = 2  # group size
+        if (self.num % 4 == 0):
+            local_size_threads = 4  # group size
+
+
         local_size = (local_size_threads,)
         #        pos_shared = cl.LocalMemory(4 * local_size_threads)
         #        col_shared = cl.LocalMemory(4 * local_size_threads)
@@ -83,7 +88,8 @@ class Particles(object):
             cl.enqueue_release_gl_objects(self.queue, self.gl_objects)
             self.queue.finish()
             self.totaltime += 2*self.dt
-            print self.totaltime
+            sys.stdout.write("\rT = {0} fm/c>".format(self.totaltime))
+            sys.stdout.flush()
             
 
  
