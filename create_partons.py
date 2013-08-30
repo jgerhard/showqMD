@@ -13,7 +13,7 @@ def create_duplet(meson, mass_parton=0.01):
     Standard mass of parton is 0.01 GeV, colour chosen at random """
 
     # position for both partons is same as meson's position in cf
-    pos = meson[0:3] + [1]
+    pos = np.array(meson[0:3] + [1], dtype=np.float32)
 
     # LRF Calculation of Energy
     mass_meson = meson[-1]
@@ -48,11 +48,13 @@ def create_duplet(meson, mass_parton=0.01):
 
     c_parton1 = choice([x + [1] for x in [ [0,0,1], [0,1,0], [1,0,0] ] ])
     c_parton2 = create_anti(c_parton1)
+    c_parton1 = np.array(c_parton1, dtype=np.float32)
+    c_parton2 = np.array(c_parton2, dtype=np.float32)
 
     # return each parton as np.array
 
-    parton1 = [pos, p_parton1, mass_parton, c_parton1]
-    parton2 = [pos, p_parton2, mass_parton, c_parton2]
+    parton1 = [pos, p_parton1, c_parton1]
+    parton2 = [pos, p_parton2, c_parton2]
 
     return parton1, parton2
 
@@ -63,7 +65,7 @@ def create_triplet(baryon, mass_parton=0.01):
     Standard mass of parton is 0.01 GeV"""
 
     # position for partons is same as baryon's position in cf
-    pos = baryon[0:3] + [1]
+    pos = np.array(baryon[0:3] + [1], dtype=np.float32)
 
 
     # LRF Calculation of Energy
@@ -103,15 +105,15 @@ def create_triplet(baryon, mass_parton=0.01):
 
     # set color r,g,b (momenta at random, though no bias introduced)
 
-    c_parton1 = [0,0,1]
-    c_parton2 = [0,1,0]
-    c_parton3 = [1,0,0]
+    c_parton1 = np.array([0,0,1,1], dtype=np.float32)
+    c_parton2 = np.array([0,1,0,1], dtype=np.float32)
+    c_parton3 = np.array([1,0,0,1], dtype=np.float32)
 
     # return each parton as np.array
 
-    parton1 = [pos, p_parton1, mass_parton, c_parton1]
-    parton2 = [pos, p_parton2, mass_parton, c_parton2]
-    parton3 = [pos, p_parton3, mass_parton, c_parton3]
+    parton1 = [pos, p_parton1, c_parton1]
+    parton2 = [pos, p_parton2, c_parton2]
+    parton3 = [pos, p_parton3, c_parton3]
 
     return parton1, parton2, parton3
 
