@@ -1,5 +1,4 @@
-import numpy as np
-from pprint import pprint
+from create_partons import create_triplet, create_duplet
 
 
 def readfile(filename, header=True):
@@ -39,12 +38,20 @@ def separate_hadrons(event, meson_itypes = [101, 104], baryon_itypes = [1]):
 
     return baryons, mesons
     
+def make_partonlist(baryons, mesons):
+    """ Takes list of baryons and mesons and creates list of partons """
+    partons = []
+    for baryon in baryons:
+        partons.extend(create_triplet(baryon))
+    for meson in mesons:
+        partons.extend(create_duplet(meson))
+    return partons
+
 
     
 if __name__ == "__main__":
-    liste = readfile("test.f14",header=False)
-    baryons, mesons = separate_hadrons(liste[0]) # take only first event
-    pprint(len(baryons))
-    pprint(len(mesons))
-    pprint(len(liste[0]))
-        
+    events = readfile("test.f14",header=False)
+    baryons, mesons = separate_hadrons(events[0]) # take only first event
+    partons = make_partonlist(baryons, mesons)
+    print(partons[0])
+    
