@@ -24,9 +24,9 @@ def fountain_np(num):
 
 
     # Momentum and velocity
-    mass = 10.0                 # take 10 MeV/c**2 as rest mass of quark
+    mass = .01                 # take 0.01 GeV/c**2 as rest mass of quark
     mom = numpy.ndarray((num, 4), dtype=numpy.float32)
-    r =  300                    # take 300 MeV/c as momentum
+    r =  0.300                 # take 300 MeV/c as momentum
     phi = numpy.random.rand(num) * 2 * numpy.pi
     theta = numpy.random.rand(num) * 2 * numpy.pi
     
