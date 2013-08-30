@@ -25,14 +25,11 @@ def readfile(filename, header=True):
 
 
 
-def separate_hadrons(event):
+def separate_hadrons(event, meson_itypes = [101, 104], baryon_itypes = [1]):
     """ Takes one event and seperates baryons from mesons 
     output format are two lists of baryons and mesons, with each particle
     being a sub-list of form (r_x, r_y, r_z, E, p_x, p_y, p_z, m)
     """
-
-    meson_itypes = [101, 104]           # consider only \pi^0 and \rho^0  (no charge in qMD)
-    baryon_itypes = [1]                 # range(1,27) 
 
     mesons_strings = filter(lambda(line): int(line.split()[9])in meson_itypes, event) # and int(line.split()[11])==0
     baryons_strings = filter(lambda(line): int(line.split()[9])in baryon_itypes, event) # and int(line.split()[11])==0
