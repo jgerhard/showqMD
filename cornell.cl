@@ -1,7 +1,6 @@
 //#pragma OPENCL EXTENSION cl_khr_fp64 : enable
-#define PROP (3*870.f)                      /* \kappa from Regge trajectories */
+#define PROP (3*0.87f)                      /* \kappa from Regge trajectories */
 #define EPS 1e-5f
-#define WIDTH 1e0f
 
 /*----------------------------------------------------------------------
   color is (r,g,b,alpha)
