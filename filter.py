@@ -1,6 +1,6 @@
 import numpy as np
 from pprint import pprint
-from lorentz import lorentz
+
 
 def readfile(filename, header=True):
     """ Reads all lines in UrQMD f14-file and generates
@@ -34,8 +34,8 @@ def separate_hadrons(event):
     meson_itypes = [101, 104]           # consider only \pi^0 and \rho^0  (no charge in qMD)
     baryon_itypes = [1]                 # range(1,27) 
 
-    mesons_strings = filter(lambda(line): int(line.split()[9])in meson_itypes and int(line.split()[11])==0, event)
-    baryons_strings = filter(lambda(line): int(line.split()[9])in baryon_itypes and int(line.split()[11])==0, event)
+    mesons_strings = filter(lambda(line): int(line.split()[9])in meson_itypes, event) # and int(line.split()[11])==0
+    baryons_strings = filter(lambda(line): int(line.split()[9])in baryon_itypes, event) # and int(line.split()[11])==0
     
     mesons = [map(lambda(x): float(x), line.split()[1:9]) for line in mesons_strings]
     baryons = [map(lambda(x): float(x), line.split()[1:9]) for line in baryons_strings]
@@ -46,9 +46,8 @@ def separate_hadrons(event):
     
 if __name__ == "__main__":
     liste = readfile("test.f14",header=False)
-    baryons, mesons = separate_hadrons(liste[0])
-    p_cf = np.array(mesons[0][3:7])
-    v_rel = p_cf[1:] / p_cf[0]
-    pprint(p_cf)
-    p_lrf = lorentz(v_rel, p_cf)
-    pprint(p_lrf)
+    baryons, mesons = separate_hadrons(liste[0]) # take only first event
+    pprint(len(baryons))
+    pprint(len(mesons))
+    pprint(len(liste[0]))
+        
