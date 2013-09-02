@@ -16,9 +16,9 @@ import physics
 import initialize
 
 #number of particles
-maxnum = 500 #*10
+maxnum = 3000 #*10
 #time step for integration
-dt = 1e-2
+dt = 1e-4
 
 class window(object):
     def __init__(self, *args, **kwargs):

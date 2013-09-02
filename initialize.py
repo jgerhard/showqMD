@@ -2,8 +2,7 @@ from OpenGL.GL import *
 import random
 import numpy as np
 from UrQMDfilter import readfile, separate_hadrons, make_partonlist
-
-
+from random import sample
 
 def fountain_urqmd(maxnum , filename="test.f14", eventnumber=0, parton_mass = 0.01):
     """ Create partons from UrQMD inputfile "filename"
@@ -18,17 +17,25 @@ def fountain_urqmd(maxnum , filename="test.f14", eventnumber=0, parton_mass = 0.
     print("Inputfile has %d mesons"%len(mesons))
     print("---------------------------")
 
-    # reduce number of particles if too many to handle
-    # only white combinations are created though
-    while (3 * len(baryons) + 2 * len(mesons)) > maxnum:
-        baryons = baryons[: 9 * len(baryons)/10]
-        mesons = mesons[: 9 * len(mesons)/10]
+    
+    potential_number = 3 * len(baryons) + 2 * len(mesons)
+    if (potential_number > maxnum):
+        print("Hadrons generated from UrQMD data file: %d"%potential_number)
+        print("Allowed maximum of processed partons: %d"%maxnum)
+        print("Reducing parton number ....")
+
+    while (potential_number > maxnum):
+        baryons = sample(baryons, 9 * len(baryons)/10)
+        mesons = sample(mesons, 9*len(mesons)/10)
+        potential_number = 3 * len(baryons) + 2 * len(mesons)
+
+    
     partons = make_partonlist(baryons, mesons)
 
     print("Processing: %d baryons"%len(baryons))
     print("Processing: %d mesons"%len(mesons))
     print("Processing total: %d partons"%len(partons))
-    print("Increase maxnum...")
+
     print(" ")
 
     pos = np.ndarray((len(partons), 4), dtype=np.float32)
@@ -36,9 +43,10 @@ def fountain_urqmd(maxnum , filename="test.f14", eventnumber=0, parton_mass = 0.
     col = np.ndarray((len(partons), 4), dtype=np.float32)
     for i in range(len(pos)):
         pos[i] = partons[i][0]
-        mom[i] = partons[i][1]
+        mom[i][0:3] = partons[i][1][1:4] # (E, px, py, pz) |-> (px, py, pz, 0)
         col[i] = partons[i][2]
-                     
+        
+
     vel = np.array(map(lambda x, y: x / y, mom,  np.sqrt(parton_mass**2 + np.array(map(lambda(x): x.dot(x), mom)))), dtype=np.float32)
     vel[:,3] =  parton_mass
 

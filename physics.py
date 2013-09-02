@@ -56,11 +56,11 @@ class Particles(object):
         cl.enqueue_acquire_gl_objects(self.queue, self.gl_objects)
 
         global_size = (self.num,)
-        local_size_threads = 1  # group size
-        if (self.num % 2 == 0):
-            local_size_threads = 2  # group size
-        if (self.num % 4 == 0):
-            local_size_threads = 4  # group size
+        local_size_threads = 33  # group size
+
+        for i in range(1,64):   # choose group size
+            if (self.num % i == 0) :
+                local_size_threads = i
 
 
         local_size = (local_size_threads,)

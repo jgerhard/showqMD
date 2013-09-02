@@ -1,5 +1,6 @@
 from create_partons import create_triplet, create_duplet
-
+from pprint import pprint
+import numpy as np
 
 def readfile(filename, header=True):
     """ Reads all lines in UrQMD f14-file and generates
@@ -24,7 +25,7 @@ def readfile(filename, header=True):
 
 
 
-def separate_hadrons(event, meson_itypes = [101, 104], baryon_itypes = [1]):
+def separate_hadrons(event, meson_itypes =range(-140,-100)+range(100,141), baryon_itypes = range(1,56)):
     """ Takes one event and seperates baryons from mesons 
     output format are two lists of baryons and mesons, with each particle
     being a sub-list of form (r_x, r_y, r_z, E, p_x, p_y, p_z, m)
@@ -52,6 +53,14 @@ def make_partonlist(baryons, mesons):
 if __name__ == "__main__":
     events = readfile("test.f14",header=False)
     baryons, mesons = separate_hadrons(events[0]) # take only first event
-    partons = make_partonlist(baryons, mesons)
-    print(partons[0])
+    
+    quarks = make_partonlist(baryons, mesons)
+    Impuls = np.array([0,0,0,0], dtype=np.float32)
+    for quark in quarks:
+        Impuls += quark[1]
+    pprint(Impuls)
+        
+
+#    partons = make_partonlist(baryons, mesons)
+#    pprint(partons[0])
     
