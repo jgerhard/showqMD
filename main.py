@@ -16,7 +16,7 @@ import physics
 import initialize
 
 #number of particles
-maxnum = 3000 #*10
+maxnum = 300 #*10
 #time step for integration
 dt = 1e-4
 
@@ -79,16 +79,24 @@ class window(object):
         ESCAPE = '\033'
         if args[0] == ESCAPE or args[0] == 'q':
             sys.exit()
+        elif args[0] == 'z':
+            self.translate.z += 5
+        elif args[0] == "Z":
+            self.translate.z -= 5
+        elif args[0] == 'x':
+            self.translate.x += 5 
+        elif args[0] == 'X':
+            self.translate.x -= 5 
+        elif args[0] == 'y':
+            self.translate.y += 5 
+        elif args[0] == 'Y':
+            self.translate.y -= 5 
+        elif args[0] == 's':
+            self.rotate.z += 20
         elif args[0] == 't':
-            print self.cle.timings
-        elif args[0] == '+':
-            self.translate.z += .1 
-        elif args[0] == '-':
-            self.translate.z -= .1 
-        elif args[0] == 'o':
-            self.translate.z -= 5 
-        elif args[0] == 'i':
-            self.translate.z += 5 
+            self.rotate.x += 20
+        elif args[0] == 'v':
+            self.rotate.y += 20
 
     def on_click(self, button, state, x, y):
         if state == GLUT_DOWN:
@@ -126,6 +134,7 @@ class window(object):
         #handle mouse transformations
         glTranslatef(self.initrans.x, self.initrans.y, self.initrans.z)
         glRotatef(self.rotate.x, 1, 0, 0)
+        glRotatef(self.rotate.z, 0, 0, 1)
         glRotatef(self.rotate.y, 0, 1, 0) #we switched around the axis so make this rotate_z
         glTranslatef(self.translate.x, self.translate.y, self.translate.z)
         
@@ -133,6 +142,7 @@ class window(object):
         self.cle.render()
 
         #draw the x, y and z axis as lines
+        
         glutil.draw_axes()
 
         glutSwapBuffers()
