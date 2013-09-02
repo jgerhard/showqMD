@@ -16,18 +16,18 @@ import physics
 import initialize
 
 #number of particles
-maxnum = 300 #*10
+maxnum = 3000 #*10
 #time step for integration
-dt = 1e-4
+dt = 5e-4
 
 class window(object):
     def __init__(self, *args, **kwargs):
         #mouse handling for transforming scene
         self.mouse_down = False
         self.mouse_old = Vec([0., 0.])
-        self.rotate = Vec([0., 0., 0.])
+        self.rotate = Vec([20., 60., 0.])
         self.translate = Vec([0., 0., 0.])
-        self.initrans = Vec([0., 0., -2.])
+        self.initrans = Vec([0., 0., -20.])
 
         self.width = 1024
         self.height = 768
@@ -36,7 +36,7 @@ class window(object):
         glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
         glutInitWindowSize(self.width, self.height)
         glutInitWindowPosition(0, 0)
-        self.win = glutCreateWindow("Part 2: Python")
+        self.win = glutCreateWindow("The qMD Model")
 
         #gets called by GLUT every frame
         glutDisplayFunc(self.draw)
@@ -97,6 +97,7 @@ class window(object):
             self.rotate.x += 20
         elif args[0] == 'v':
             self.rotate.y += 20
+        print("Angle (%f, %f, %f)"%(self.rotate.x, self.rotate.y, self.rotate.z))
 
     def on_click(self, button, state, x, y):
         if state == GLUT_DOWN:
