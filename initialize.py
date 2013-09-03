@@ -1,6 +1,6 @@
 import numpy as np
 from UrQMDfilter import readfile, separate_hadrons, make_partonlist
-from random import rand, choice, sample
+from random import choice, sample
 
 def fountain_urqmd(maxnum , filename="test.f14", eventnumber=0, parton_mass = 0.01):
     """ Create partons from UrQMD inputfile "filename"
@@ -105,13 +105,6 @@ def fountain(num, method = fountain_urqmd):
 
     pos, col, vel = method(num)
     
-    #create the Vertex Buffer Objects
-    from OpenGL.arrays import vbo 
-    pos_vbo = vbo.VBO(data=pos, usage=GL_DYNAMIC_DRAW, target=GL_ARRAY_BUFFER)
-    pos_vbo.bind()
-    col_vbo = vbo.VBO(data=col, usage=GL_DYNAMIC_DRAW, target=GL_ARRAY_BUFFER)
-    col_vbo.bind()
-
-    return (pos_vbo, col_vbo, vel)
+    return (pos, col, vel)
 
 
