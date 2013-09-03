@@ -12,118 +12,71 @@ class Particles(object):
         self.dt = numpy.float32(dt)
 
 
-    def loadData(self, pos_vbo, col_vbo, vel):
-        import pyopencl as cl
+    def loadData(self, pos, col, vel):
         mf = cl.mem_flags
-        self.pos_vbo = pos_vbo
-        self.col_vbo = col_vbo
 
-        self.pos = pos_vbo.data
-        self.col = col_vbo.data
-        self.vel = vel
+        self.pos_A = pos
+        self.vel_A = vel
+        self.col = col
 
+        self.pos_B = pos
+        self.vel_B = vel
 
-            self.pos_cl = cl.GLBuffer(self.ctx, mf.READ_WRITE, int(self.pos_vbo.buffer))
-            self.col_cl = cl.GLBuffer(self.ctx, mf.READ_WRITE, int(self.col_vbo.buffer))
-        except AttributeError:
-            self.pos_cl = cl.GLBuffer(self.ctx, mf.READ_WRITE, int(self.pos_vbo.buffers[0]))
-            self.col_cl = cl.GLBuffer(self.ctx, mf.READ_WRITE, int(self.col_vbo.buffers[0]))
-            self.col_vbo.bind()
 
         #pure OpenCL arrays
-        self.vel_cl = cl.Buffer(self.ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=vel)
-        self.pos_gen_cl = cl.Buffer(self.ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=self.pos)
-        self.vel_gen_cl = cl.Buffer(self.ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=self.vel)
-
-        self.pos_cl = cl.Buffer(self.ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=self.pos)
-        self.col_cl = cl.Buffer(self.ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=self.vel)
-
+        self.vel_A_cl = cl.Buffer(self.ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=self.vel_A)
+        self.pos_A_cl = cl.Buffer(self.ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=self.pos_A)
+        
+        self.col_cl = cl.Buffer(self.ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=self.col)
+        
+        self.vel_B_cl = cl.Buffer(self.ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=self.vel_A)
+        self.pos_B_cl = cl.Buffer(self.ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=self.pos_A)
+        
         self.queue.finish()
-
-        # set up the list of GL objects to share with opencl
-        self.gl_objects = [self.pos_cl, self.col_cl]
         
 
-
-    def execute(self, sub_intervals):
-        cl.enqueue_acquire_gl_objects(self.queue, self.gl_objects)
+    def execute(self, timesteps):
 
         global_size = (self.num,)
-        local_size_threads = 33  # group size
-
         for i in range(1,64):   # choose group size
             if (self.num % i == 0) :
                 local_size_threads = i
 
 
         local_size = (local_size_threads,)
-        #        pos_shared = cl.LocalMemory(4 * local_size_threads)
-        #        col_shared = cl.LocalMemory(4 * local_size_threads)
 
-        kernelargs = (self.pos_cl, 
-                      self.vel_cl,
-                      self.pos_gen_cl,
-                      self.vel_gen_cl,
+        kernelargs = (self.pos_A_cl, 
+                      self.vel_A_cl,
+                      self.pos_B_cl,
+                      self.vel_B_cl,
                       self.col_cl, 
                       self.dt,
                       self.num_cl)
 
-        kernelargsT = (self.pos_gen_cl, 
-                       self.vel_gen_cl,
-                       self.pos_cl,
-                       self.vel_cl,
+        kernelargsT = (self.pos_B_cl, 
+                       self.vel_B_cl,
+                       self.pos_A_cl,
+                       self.vel_A_cl,
                        self.col_cl, 
                        self.dt,
                        self.num_cl)
-        for i in xrange(0, sub_intervals):
+        for i in xrange(0, timesteps):
             self.program.nbody(self.queue, global_size, local_size, *(kernelargs))
             self.program.nbody(self.queue, global_size, local_size, *(kernelargsT)) # change role of kernelargs to do double buffered calc
-            cl.enqueue_release_gl_objects(self.queue, self.gl_objects)
             self.queue.finish()
             self.totaltime += 2*self.dt
             sys.stdout.write("\rT = {0} fm/c>".format(self.totaltime))
             sys.stdout.flush()
-            
 
  
     def clinit(self):
         plats = cl.get_platforms()
-        from pyopencl.tools import get_gl_sharing_context_properties
-        self.ctx = cl.Context(properties=get_gl_sharing_context_properties(),
-                              devices=[])
+        self.ctx = cl.create_some_context()
         self.queue = cl.CommandQueue(self.ctx)
 
     def loadProgram(self, filename):
-        #read in the OpenCL source file as a string
         f = open(filename, 'r')
         fstr = "".join(f.readlines())
-        #print fstr
-        #create the program
         self.program = cl.Program(self.ctx, fstr).build()
 
-
-    def render(self):
-        
-        glEnable(GL_POINT_SMOOTH)
-        glPointSize(2)
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-
-        #setup the VBOs
-        self.col_vbo.bind()
-        glColorPointer(4, GL_FLOAT, 0, self.col_vbo)
-
-        self.pos_vbo.bind()
-        glVertexPointer(4, GL_FLOAT, 0, self.pos_vbo)
-
-        glEnableClientState(GL_VERTEX_ARRAY)
-        glEnableClientState(GL_COLOR_ARRAY)
-        #draw the VBOs
-        glDrawArrays(GL_POINTS, 0, self.num)
-
-        glDisableClientState(GL_COLOR_ARRAY)
-        glDisableClientState(GL_VERTEX_ARRAY)
-
-        glDisable(GL_BLEND)
-        
 
