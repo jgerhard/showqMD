@@ -25,9 +25,6 @@ class Simulation():
     
     def save(self, fname="output.csv"):
         (pos, col, vel) = self.cle.pullData()
-        print(len(pos))
-        print(len(col))
-        print(len(vel))
         liste = []
         for i in range(len(pos)):
             current = concatenate((pos[i][0:3], vel[i], col[i][0:3]))
