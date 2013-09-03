@@ -35,8 +35,13 @@ class Particles(object):
         
         self.queue.finish()
 
-    def pullData(self, pos, col ,vel):
+    def pullData(self):
         """ Pulls back device data to host """
+        cl.enqueue_copy(self.queue, self.pos_A, self.pos_A_cl)
+        cl.enqueue_copy(self.queue, self.vel_A, self.vel_A_cl)
+        cl.enqueue_copy(self.queue, self.col, self.col_cl)
+        return (self.pos_A, self.col, self.vel_A)
+        
         
 
     def execute(self, timesteps):
@@ -74,7 +79,7 @@ class Particles(object):
 
  
     def clinit(self):
-        plats = cl.get_platforms()
+#        plats = cl.get_platforms()
         self.ctx = cl.create_some_context()
         self.queue = cl.CommandQueue(self.ctx)
 
