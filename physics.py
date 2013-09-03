@@ -44,7 +44,7 @@ class Particles(object):
         
         
 
-    def execute(self, timesteps):
+    def execute(self, run_time, verbose):
 
         global_size = (self.num,)
         for i in range(1,64):   # choose group size
@@ -69,13 +69,14 @@ class Particles(object):
                        self.col_cl, 
                        self.dt,
                        self.num_cl)
-        for i in xrange(0, timesteps):
+        
+        while (self.totaltime < run_time):
             self.program.nbody(self.queue, global_size, local_size, *(kernelargs))
             self.program.nbody(self.queue, global_size, local_size, *(kernelargsT)) # change role of kernelargs to do double buffered calc
             self.queue.finish()
             self.totaltime += 2*self.dt
-            sys.stdout.write("\rTimestep {0}: t = {1} fm/c>".format(i, self.totaltime))
-            sys.stdout.flush()
+            sys.stdout.write("\rSimulating till T={0} fm/c:\t t = {1} fm/c>".format(run_time, self.totaltime))
+            sys.stdout.flush() 
 
  
     def clinit(self):
