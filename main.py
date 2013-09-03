@@ -6,9 +6,10 @@ from numpy import savetxt, concatenate
 #max number of particles
 maxnum = 6000 
 #time step for integration
-dt = 1e-4
+dt = 1e-2
 #number of timesteps
-timesteps = 1000
+run_time = 5                  # run time in fm/c
+save_time = 0.1               # timesteps to be saved in fm/c
 
 class Simulation():
     def __init__(self, maxnum=maxnum, dt=dt):
@@ -18,27 +19,35 @@ class Simulation():
         #create our OpenCL instance
         self.cle = physics.Particles(num, dt)
         self.cle.pushData(pos, col, vel)
+        self.totaltime = self.cle.totaltime
 
 
-    def run(self, timesteps=timesteps):
+    def run(self, run_time = run_time):
         #update or particle positions by calling the OpenCL kernel
-        self.cle.execute(timesteps) 
+        self.cle.execute(run_time) 
+        self.totaltime = self.cle.totaltime
     
     def save(self, fname="output.csv"):
         (pos, col, vel) = self.cle.pullData()
         liste = []
         for i in range(len(pos)):
-            current = concatenate((pos[i][0:3], vel[i], col[i][0:3]))
+            current = concatenate(([self.cle.totaltime],pos[i][0:3], vel[i], col[i][0:3]))
             liste.append(current)
-        savetxt(fname, liste, delimiter=",")
+    
+        try:
+            f_handle = file(fname, 'a')
+            savetxt(f_handle, liste, delimiter=",")
+        except:
+            savetxt(fname, liste, delimiter=",")
 
 
 if __name__ == "__main__":
     MyRun = Simulation()
-    then = time.clock()
-    MyRun.run()
-    delta = time.clock() - then
-    print("Computation took %f msec"%(delta*1e3))
+
+    while (MyRun.totaltime < run_time):
+        MyRun.save()
+        MyRun.run(MyRun.totaltime + save_time)
     MyRun.save()
+
 
 
