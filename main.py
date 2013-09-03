@@ -30,7 +30,7 @@ class Simulation():
         print(len(vel))
         liste = []
         for i in range(len(pos)):
-            current = concatenate((pos[i][0:3], col[i][0:3], vel[i]))
+            current = concatenate((pos[i][0:3], vel[i], col[i][0:3]))
             liste.append(current)
         savetxt(fname, liste, delimiter=",")
 
