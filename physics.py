@@ -12,7 +12,8 @@ class Particles(object):
         self.dt = numpy.float32(dt)
 
 
-    def loadData(self, pos, col, vel):
+    def pushData(self, pos, col, vel):
+        """ Pushes particle data from host to device """
         mf = cl.mem_flags
 
         self.pos_A = pos
@@ -33,6 +34,9 @@ class Particles(object):
         self.pos_B_cl = cl.Buffer(self.ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=self.pos_A)
         
         self.queue.finish()
+
+    def pullData(self, pos, col ,vel):
+        """ Pulls back device data to host """
         
 
     def execute(self, timesteps):
