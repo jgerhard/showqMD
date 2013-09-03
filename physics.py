@@ -74,7 +74,7 @@ class Particles(object):
             self.program.nbody(self.queue, global_size, local_size, *(kernelargsT)) # change role of kernelargs to do double buffered calc
             self.queue.finish()
             self.totaltime += 2*self.dt
-            sys.stdout.write("\rT = {0} fm/c>".format(self.totaltime))
+            sys.stdout.write("\rTimestep {0}: t = {1} fm/c>".format(i, self.totaltime))
             sys.stdout.flush()
 
  

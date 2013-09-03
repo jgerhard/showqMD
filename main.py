@@ -1,5 +1,6 @@
 import physics
 import initialize
+import time
 from numpy import savetxt, concatenate
 
 #max number of particles
@@ -34,7 +35,10 @@ class Simulation():
 
 if __name__ == "__main__":
     MyRun = Simulation()
+    then = time.clock()
     MyRun.run()
+    delta = time.clock() - then
+    print("Computation took %f msec"%(delta*1e3))
     MyRun.save()
 
 
