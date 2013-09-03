@@ -16,16 +16,16 @@ import physics
 import initialize
 
 #number of particles
-maxnum = 3000 #*10
+maxnum = 600 #*10
 #time step for integration
-dt = 5e-4
+dt = 1e-2
 
 class window(object):
     def __init__(self, *args, **kwargs):
         #mouse handling for transforming scene
         self.mouse_down = False
         self.mouse_old = Vec([0., 0.])
-        self.rotate = Vec([20., 60., 0.])
+        self.rotate = Vec([90., 90., 0.])
         self.translate = Vec([0., 0., 0.])
         self.initrans = Vec([0., 0., -20.])
 
