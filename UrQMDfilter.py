@@ -53,14 +53,5 @@ def make_partonlist(baryons, mesons):
 if __name__ == "__main__":
     events = readfile("test.f14",header=False)
     baryons, mesons = separate_hadrons(events[0]) # take only first event
-    
-    quarks = make_partonlist(baryons, mesons)
-    Impuls = np.array([0,0,0,0], dtype=np.float32)
-    for quark in quarks:
-        Impuls += quark[1]
-    pprint(Impuls)
-        
-
-#    partons = make_partonlist(baryons, mesons)
-#    pprint(partons[0])
-    
+    np.savetxt("baryons.csv", baryons, delimiter=",")
+    np.savetxt("mesons.csv", mesons, delimiter=",")
