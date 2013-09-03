@@ -1,8 +1,6 @@
-from OpenGL.GL import *
-import random
 import numpy as np
 from UrQMDfilter import readfile, separate_hadrons, make_partonlist
-from random import sample
+from random import rand, choice, sample
 
 def fountain_urqmd(maxnum , filename="test.f14", eventnumber=0, parton_mass = 0.01):
     """ Create partons from UrQMD inputfile "filename"
