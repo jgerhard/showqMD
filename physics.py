@@ -6,11 +6,10 @@ import pyopencl as cl
 import sys
 import numpy
 
-
-class Part2(object):
+class Particles(object):
     def __init__(self, num, dt, *args, **kwargs):
         self.clinit()
-        self.loadProgram("part2.cl");
+        self.loadProgram("cornell.cl");
         self.totaltime = 0.0
         self.num = num
         self.num_cl = numpy.uint32(num)
@@ -57,7 +56,13 @@ class Part2(object):
         cl.enqueue_acquire_gl_objects(self.queue, self.gl_objects)
 
         global_size = (self.num,)
-        local_size_threads = 22  # group size
+        local_size_threads = 33  # group size
+
+        for i in range(1,64):   # choose group size
+            if (self.num % i == 0) :
+                local_size_threads = i
+
+
         local_size = (local_size_threads,)
         #        pos_shared = cl.LocalMemory(4 * local_size_threads)
         #        col_shared = cl.LocalMemory(4 * local_size_threads)
@@ -83,7 +88,8 @@ class Part2(object):
             cl.enqueue_release_gl_objects(self.queue, self.gl_objects)
             self.queue.finish()
             self.totaltime += 2*self.dt
-            print self.totaltime
+            sys.stdout.write("\rT = {0} fm/c>".format(self.totaltime))
+            sys.stdout.flush()
             
 
  

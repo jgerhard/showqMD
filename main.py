@@ -11,23 +11,23 @@ import glutil
 from vector import Vec
 
 #OpenCL code
-import part2
+import physics
 #functions for initial values of particles
 import initialize
 
 #number of particles
-num = 220 #*10
+maxnum = 600 #*10
 #time step for integration
-dt = 1e-4
+dt = 1e-2
 
 class window(object):
     def __init__(self, *args, **kwargs):
         #mouse handling for transforming scene
         self.mouse_down = False
         self.mouse_old = Vec([0., 0.])
-        self.rotate = Vec([0., 0., 0.])
+        self.rotate = Vec([90., 90., 0.])
         self.translate = Vec([0., 0., 0.])
-        self.initrans = Vec([0., 0., -2.])
+        self.initrans = Vec([0., 0., -20.])
 
         self.width = 1024
         self.height = 768
@@ -36,7 +36,7 @@ class window(object):
         glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
         glutInitWindowSize(self.width, self.height)
         glutInitWindowPosition(0, 0)
-        self.win = glutCreateWindow("Part 2: Python")
+        self.win = glutCreateWindow("The qMD Model")
 
         #gets called by GLUT every frame
         glutDisplayFunc(self.draw)
@@ -53,9 +53,10 @@ class window(object):
         self.glinit()
 
         #set up initial conditions
-        (pos_vbo, col_vbo, vel) = initialize.fountain(num)
+        (pos_vbo, col_vbo, vel) = initialize.fountain(maxnum)
+        num = len(vel)
         #create our OpenCL instance
-        self.cle = part2.Part2(num, dt)
+        self.cle = physics.Particles(num, dt)
         self.cle.loadData(pos_vbo, col_vbo, vel)
 
         glutMainLoop()
@@ -78,16 +79,25 @@ class window(object):
         ESCAPE = '\033'
         if args[0] == ESCAPE or args[0] == 'q':
             sys.exit()
+        elif args[0] == 'z':
+            self.translate.z += 5
+        elif args[0] == "Z":
+            self.translate.z -= 5
+        elif args[0] == 'x':
+            self.translate.x += 5 
+        elif args[0] == 'X':
+            self.translate.x -= 5 
+        elif args[0] == 'y':
+            self.translate.y += 5 
+        elif args[0] == 'Y':
+            self.translate.y -= 5 
+        elif args[0] == 's':
+            self.rotate.z += 20
         elif args[0] == 't':
-            print self.cle.timings
-        elif args[0] == '+':
-            self.translate.z += .1 
-        elif args[0] == '-':
-            self.translate.z -= .1 
-        elif args[0] == 'o':
-            self.translate.z -= 5 
-        elif args[0] == 'i':
-            self.translate.z += 5 
+            self.rotate.x += 20
+        elif args[0] == 'v':
+            self.rotate.y += 20
+        print("Angle (%f, %f, %f)"%(self.rotate.x, self.rotate.y, self.rotate.z))
 
     def on_click(self, button, state, x, y):
         if state == GLUT_DOWN:
@@ -125,6 +135,7 @@ class window(object):
         #handle mouse transformations
         glTranslatef(self.initrans.x, self.initrans.y, self.initrans.z)
         glRotatef(self.rotate.x, 1, 0, 0)
+        glRotatef(self.rotate.z, 0, 0, 1)
         glRotatef(self.rotate.y, 0, 1, 0) #we switched around the axis so make this rotate_z
         glTranslatef(self.translate.x, self.translate.y, self.translate.z)
         
@@ -132,6 +143,7 @@ class window(object):
         self.cle.render()
 
         #draw the x, y and z axis as lines
+        
         glutil.draw_axes()
 
         glutSwapBuffers()
