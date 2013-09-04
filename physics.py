@@ -75,7 +75,7 @@ class Particles(object):
             self.program.nbody(self.queue, global_size, local_size, *(kernelargsT)) # change role of kernelargs to do double buffered calc
             self.queue.finish() # spare time by putting this after the loop -- output of simulation time depends on this
             self.totaltime += 2*self.dt
-            sys.stdout.write("\rSimulating till T={0} fm/c:\t t = {1} fm/c>".format(run_time, self.totaltime))
+            sys.stdout.write("\r t = {0} fm/c>".format(self.totaltime))
             sys.stdout.flush() 
 
 

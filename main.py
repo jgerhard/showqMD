@@ -8,7 +8,7 @@ maxnum = 6000
 #time step for integration
 dt = 5e-3
 #number of timesteps
-run_time = 5                  # run time in fm/c
+run_time = 20                  # run time in fm/c
 save_time = 0.1               # timesteps to be saved in fm/c
 
 class Simulation():
@@ -27,27 +27,36 @@ class Simulation():
         self.cle.execute(run_time) 
         self.totaltime = self.cle.totaltime
     
-    def save(self, fname="output.csv"):
+    def save(self, fname="output.csv", one_file=True, step_number=0):
+        """ Outputs data into fname as csv file. If not one_file
+        different files with step_number in their name are created """
         (pos, col, vel) = self.cle.pullData()
         liste = []
         for i in range(len(pos)):
-            current = concatenate(([self.cle.totaltime],pos[i][0:3], vel[i], col[i][0:3]))
+            current = concatenate(([self.totaltime],pos[i][0:3], vel[i], col[i][0:3]))
             liste.append(current)
     
-        try:
-            f_handle = file(fname, 'a')
-            savetxt(f_handle, liste, delimiter=",")
-        except:
-            savetxt(fname, liste, delimiter=",")
+        if one_file:
+            try:
+                f_handle = file(fname, 'a')
+                savetxt(f_handle, liste, delimiter=",")
+            except:
+                savetxt(fname, liste, delimiter=",")
+        else:
+            savetxt(fname%step_number, liste, delimiter=",")
+        
 
 
 if __name__ == "__main__":
     MyRun = Simulation()
 
+    i = 0
+    print("Simulating %f fm/c"%run_time)
     while (MyRun.totaltime < run_time):
-        MyRun.save()
         MyRun.run(MyRun.totaltime + save_time)
-    MyRun.save()
+        i += 1
+        MyRun.save(fname="output%d.csv", one_file=True)#, step_number=i)
+
 
 
 
