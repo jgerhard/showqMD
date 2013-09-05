@@ -8,7 +8,7 @@ maxnum = 6000
 #time step for integration
 dt = 5e-3
 #number of timesteps
-run_time = 20                  # run time in fm/c
+run_time = 10                  # run time in fm/c
 save_time = 0.1               # timesteps to be saved in fm/c
 
 class Simulation():
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     while (MyRun.totaltime < run_time):
         MyRun.run(MyRun.totaltime + save_time)
         i += 1
-        MyRun.save(fname="output%d.csv", one_file=True)#, step_number=i)
+        MyRun.save(fname="output.csv", one_file=True)#, step_number=i)
     MyRun.save(fname="final.csv")
 
 
