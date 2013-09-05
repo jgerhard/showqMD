@@ -8,7 +8,7 @@ maxnum = 6000
 #time step for integration
 dt = 5e-3
 #number of timesteps
-run_time = 10                  # run time in fm/c
+run_time = 10                # run time in fm/c
 save_time = 0.1               # timesteps to be saved in fm/c
 
 class Simulation():
