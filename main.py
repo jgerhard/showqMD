@@ -55,8 +55,11 @@ if __name__ == "__main__":
     #     MyRun.run(MyRun.totaltime + save_time)
     #     i += 1
     #     MyRun.save(fname="output%d.csv", one_file=False, step_number=i)
+    then = time.time()          # standard is time.clock()
     MyRun.run(run_time)
+    walltime = time.time() - then
+    print("Run took %f sec"%runtime)
     MyRun.save(fname="final.csv")
-
+    
 
 
