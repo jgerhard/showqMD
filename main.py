@@ -56,7 +56,7 @@ if __name__ == "__main__":
         MyRun.run(MyRun.totaltime + save_time)
         i += 1
         MyRun.save(fname="output%d.csv", one_file=True)#, step_number=i)
-
+    MyRun.save(fname="final.csv")
 
 
 
