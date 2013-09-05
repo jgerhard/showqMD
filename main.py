@@ -30,10 +30,11 @@ class Simulation():
     def save(self, fname="output.csv", one_file=True, step_number=0):
         """ Outputs data into fname as csv file. If not one_file
         different files with step_number in their name are created """
-        (pos, col, vel) = self.cle.pullData()
+        (pos, col, vel, force) = self.cle.pullData()
+
         liste = []
         for i in range(len(pos)):
-            current = concatenate(([self.totaltime],pos[i][0:3], vel[i], col[i][0:3]))
+            current = concatenate(([self.totaltime],pos[i][0:3], vel[i], col[i][0:3], force[i][0:3]))
             liste.append(current)
     
         if one_file:
@@ -55,8 +56,8 @@ if __name__ == "__main__":
     while (MyRun.totaltime < run_time):
         MyRun.run(MyRun.totaltime + save_time)
         i += 1
-        MyRun.save(fname="output%d.csv", one_file=True)#, step_number=i)
-
+        MyRun.save(fname="output.csv", one_file=True)#, step_number=i)
+    MyRun.save(fname="final.csv")
 
 
 

@@ -30,7 +30,8 @@ __kernel void nbody(__global float4* pos_old,
                     __global float4* vel_old,
                     __global float4* pos_new,
                     __global float4* vel_new,
-                    __global float4* color, 
+                    __global float4* color,
+                    __global float4* cum_force,
                     float dt,
                     uint PARTICLE_NUMBER) 
 {
@@ -94,4 +95,5 @@ __kernel void nbody(__global float4* pos_old,
   v.w = mass;
   pos_new[i] = p;
   vel_new[i] = v;
+  cum_force[i] = force;
 }

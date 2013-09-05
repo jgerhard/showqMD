@@ -1,6 +1,7 @@
 import pyopencl as cl
 import sys
-import numpy
+import numpy as np
+
 
 class Particles(object):
     def __init__(self, num, dt, *args, **kwargs):
@@ -8,8 +9,9 @@ class Particles(object):
         self.loadProgram("cornell.cl");
         self.totaltime = 0.0
         self.num = num
-        self.num_cl = numpy.uint32(num)
-        self.dt = numpy.float32(dt)
+        self.num_cl = np.uint32(num)
+        self.dt = np.float32(dt)
+        self.force = np.ndarray((num, 4), dtype=np.float32) 
 
 
     def pushData(self, pos, col, vel):
@@ -32,6 +34,8 @@ class Particles(object):
         
         self.vel_B_cl = cl.Buffer(self.ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=self.vel_A)
         self.pos_B_cl = cl.Buffer(self.ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=self.pos_A)
+
+        self.cum_force = cl.Buffer(self.ctx, mf.WRITE_ONLY, self.force.nbytes)
         
         self.queue.finish()
 
@@ -40,7 +44,8 @@ class Particles(object):
         cl.enqueue_copy(self.queue, self.pos_A, self.pos_A_cl)
         cl.enqueue_copy(self.queue, self.vel_A, self.vel_A_cl)
         cl.enqueue_copy(self.queue, self.col, self.col_cl)
-        return (self.pos_A, self.col, self.vel_A)
+        cl.enqueue_copy(self.queue, self.cum_force, self.force)
+        return (self.pos_A, self.col, self.vel_A, self.force)
         
         
 
@@ -58,7 +63,8 @@ class Particles(object):
                       self.vel_A_cl,
                       self.pos_B_cl,
                       self.vel_B_cl,
-                      self.col_cl, 
+                      self.col_cl,
+                      self.cum_force,
                       self.dt,
                       self.num_cl)
 
@@ -67,6 +73,7 @@ class Particles(object):
                        self.pos_A_cl,
                        self.vel_A_cl,
                        self.col_cl, 
+                       self.cum_force,
                        self.dt,
                        self.num_cl)
         
