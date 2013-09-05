@@ -8,7 +8,7 @@ maxnum = 6000
 #time step for integration
 dt = 5e-3
 #number of timesteps
-run_time = 10                # run time in fm/c
+run_time = 50                # run time in fm/c
 save_time = 0.1               # timesteps to be saved in fm/c
 
 class Simulation():
@@ -31,7 +31,6 @@ class Simulation():
         """ Outputs data into fname as csv file. If not one_file
         different files with step_number in their name are created """
         (pos, col, vel, force) = self.cle.pullData()
-
         liste = []
         for i in range(len(pos)):
             current = concatenate(([self.totaltime],pos[i][0:3], vel[i], col[i][0:3], force[i][0:3]))

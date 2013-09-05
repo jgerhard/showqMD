@@ -11,7 +11,7 @@ class Particles(object):
         self.num = num
         self.num_cl = np.uint32(num)
         self.dt = np.float32(dt)
-        self.force = np.ndarray((num, 4), dtype=np.float32) 
+        self.force = np.zeros((num, 4), dtype=np.float32) 
 
 
     def pushData(self, pos, col, vel):
@@ -35,7 +35,7 @@ class Particles(object):
         self.vel_B_cl = cl.Buffer(self.ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=self.vel_A)
         self.pos_B_cl = cl.Buffer(self.ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=self.pos_A)
 
-        self.cum_force = cl.Buffer(self.ctx, mf.WRITE_ONLY, self.force.nbytes)
+        self.cum_force = cl.Buffer(self.ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=self.force)
         
         self.queue.finish()
 
@@ -44,7 +44,7 @@ class Particles(object):
         cl.enqueue_copy(self.queue, self.pos_A, self.pos_A_cl)
         cl.enqueue_copy(self.queue, self.vel_A, self.vel_A_cl)
         cl.enqueue_copy(self.queue, self.col, self.col_cl)
-        cl.enqueue_copy(self.queue, self.cum_force, self.force)
+        cl.enqueue_copy(self.queue, self.force, self.cum_force)
         return (self.pos_A, self.col, self.vel_A, self.force)
         
         
