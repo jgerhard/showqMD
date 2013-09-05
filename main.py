@@ -49,13 +49,14 @@ class Simulation():
 
 if __name__ == "__main__":
     MyRun = Simulation()
-
-    i = 0
     print("Simulating %f fm/c"%run_time)
-    while (MyRun.totaltime < run_time):
-        MyRun.run(MyRun.totaltime + save_time)
-        i += 1
-        MyRun.save(fname="output.csv", one_file=True)#, step_number=i)
+    # i = 0
+
+    # while (MyRun.totaltime < run_time):
+    #     MyRun.run(MyRun.totaltime + save_time)
+    #     i += 1
+    #     MyRun.save(fname="output.csv", one_file=True)#, step_number=i)
+    MyRun.run(run_time)
     MyRun.save(fname="final.csv")
 
 
