@@ -30,10 +30,10 @@ class Simulation():
     def save(self, fname="output.csv", one_file=True, step_number=0):
         """ Outputs data into fname as csv file. If not one_file
         different files with step_number in their name are created """
-        (pos, col, vel, force) = self.cle.pullData()
+        (pos, col, mom, force) = self.cle.pullData()
         liste = []
         for i in range(len(pos)):
-            current = concatenate(([self.totaltime],pos[i][0:3], vel[i], col[i][0:3], force[i][0:3]))
+            current = concatenate(([self.totaltime],pos[i][0:3], mom[i], col[i][0:3], force[i][0:3]))
             liste.append(current)
     
         if one_file:
@@ -44,7 +44,12 @@ class Simulation():
                 savetxt(fname, liste, delimiter=",")
         else:
             savetxt(fname%step_number, liste, delimiter=",")
+    
+    def hadronize(self):
+        """ Experimental isochronal hadronization on host """
         
+        (pos, col, mom, force) = self.cle.pullData()
+        return concatenate((pos, mom, force, col),1)
 
 
 if __name__ == "__main__":
@@ -59,7 +64,7 @@ if __name__ == "__main__":
     MyRun.run(run_time)
     walltime = time.time() - then
     print("Run took %f sec"%walltime)
-    MyRun.save(fname="final.csv")
-    
+    Result = MyRun.save()
+
 
 

@@ -14,25 +14,25 @@ class Particles(object):
         self.force = np.zeros((num, 4), dtype=np.float32) 
 
 
-    def pushData(self, pos, col, vel):
+    def pushData(self, pos, col, mom):
         """ Pushes particle data from host to device """
         mf = cl.mem_flags
 
         self.pos_A = pos
-        self.vel_A = vel
+        self.mom_A = mom
         self.col = col
 
         self.pos_B = pos
-        self.vel_B = vel
+        self.mom_B = mom
 
 
         #pure OpenCL arrays
-        self.vel_A_cl = cl.Buffer(self.ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=self.vel_A)
+        self.mom_A_cl = cl.Buffer(self.ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=self.mom_A)
         self.pos_A_cl = cl.Buffer(self.ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=self.pos_A)
         
         self.col_cl = cl.Buffer(self.ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=self.col)
         
-        self.vel_B_cl = cl.Buffer(self.ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=self.vel_A)
+        self.mom_B_cl = cl.Buffer(self.ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=self.mom_A)
         self.pos_B_cl = cl.Buffer(self.ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=self.pos_A)
 
         self.cum_force = cl.Buffer(self.ctx, mf.READ_WRITE | mf.COPY_HOST_PTR, hostbuf=self.force)
@@ -42,10 +42,10 @@ class Particles(object):
     def pullData(self):
         """ Pulls back device data to host """
         cl.enqueue_copy(self.queue, self.pos_A, self.pos_A_cl)
-        cl.enqueue_copy(self.queue, self.vel_A, self.vel_A_cl)
+        cl.enqueue_copy(self.queue, self.mom_A, self.mom_A_cl)
         cl.enqueue_copy(self.queue, self.col, self.col_cl)
         cl.enqueue_copy(self.queue, self.force, self.cum_force)
-        return (self.pos_A, self.col, self.vel_A, self.force)
+        return (self.pos_A, self.col, self.mom_A, self.force)
         
         
 
@@ -60,18 +60,18 @@ class Particles(object):
         local_size = (local_size_threads,)
 
         kernelargs = (self.pos_A_cl, 
-                      self.vel_A_cl,
+                      self.mom_A_cl,
                       self.pos_B_cl,
-                      self.vel_B_cl,
+                      self.mom_B_cl,
                       self.col_cl,
                       self.cum_force,
                       self.dt,
                       self.num_cl)
 
         kernelargsT = (self.pos_B_cl, 
-                       self.vel_B_cl,
+                       self.mom_B_cl,
                        self.pos_A_cl,
-                       self.vel_A_cl,
+                       self.mom_A_cl,
                        self.col_cl, 
                        self.cum_force,
                        self.dt,
