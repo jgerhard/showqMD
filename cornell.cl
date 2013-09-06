@@ -61,7 +61,7 @@ __kernel void nbody(__global float4* pos_old,
     const float4 other_pos = pos_old[j];
     other_pos.w = 0.f;
     const float4 other_col = color[j];
-    force += PROP * normalize(p - other_pos) * ( cornell(c, other_col) );//+ log(length(p-other_pos)+EPS) );
+    force += PROP * normalize(p - other_pos) * cornell(c, other_col);
   }
 
   p_neu = (mass * v * 1.f/sqrt(EPS+1.f - length(v)*length(v)))+(force * dt * 0.5f);
@@ -81,7 +81,7 @@ __kernel void nbody(__global float4* pos_old,
     const float4 other_pos = pos_old[j];
     other_pos.w = 0.f;
     const float4 other_col = color[j];
-    force += PROP * normalize(p - other_pos) * ( cornell(c, other_col));// + log(length(p-other_pos)+EPS) );
+    force += PROP * normalize(p - other_pos) * cornell(c, other_col);
   }
   p_neu = (mass * v * 1.f/sqrt(EPS+1.f - length(v)*length(v)))+(force * dt);
   
