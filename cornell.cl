@@ -38,14 +38,6 @@ __kernel void nbody(__global float4* pos_old,
   const unsigned int i = get_global_id(0);
 
   float4 p = pos_old[i];
-  float mean = 0.f;
-
-  for (uint j = 0; j < PARTICLE_NUMBER; ++j)
-    mean += fast_distance(p, pos_old[j]);
-
-  mean /= PARTICLE_NUMBER;
-
-
   float4 v = vel_old[i];
   float mass = v.w;
   v.w = 0.f;
