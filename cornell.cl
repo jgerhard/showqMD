@@ -27,9 +27,9 @@ inline float cornell(float4 my_color, float4 its_color)
 }  
 
 __kernel void nbody(__global float4* pos_old, 
-                    __global float4* vel_old,
+                    __global float4* mom_old,
                     __global float4* pos_new,
-                    __global float4* vel_new,
+                    __global float4* mom_new,
                     __global float4* color,
                     __global float4* cum_force,
                     float dt,
@@ -37,55 +37,53 @@ __kernel void nbody(__global float4* pos_old,
 {
   const unsigned int i = get_global_id(0);
 
-  float4 p = pos_old[i];
-  float4 v = vel_old[i];
-  float mass = v.w;
-  v.w = 0.f;
-  p.w = 0.f;
+  float4 position = pos_old[i];
+  float4 momentum = mom_old[i];
+  float mass = momentum.w;
+  momentum.w = 0.f;
+  position.w = 0.f;
   
   const float4 c = color[i];
 
 
   float4 force = (float4) (0.f, 0.f, 0.f, 0.f);
-  float4 p_neu = (float4) (0.f, 0.f, 0.f, 0.f);
-
   for (uint j = 0; j < PARTICLE_NUMBER; ++j) {
     const float4 other_pos = pos_old[j];
     other_pos.w = 0.f;
     const float4 other_col = color[j];
-    force += PROP * normalize(p - other_pos) * cornell(c, other_col);
+    force += PROP * normalize(position - other_pos) * cornell(c, other_col);
   }
 
-  p_neu = (mass * v * 1.f/sqrt(EPS+1.f - length(v)*length(v)))+(force * dt * 0.5f);
 
-  v = p_neu / sqrt(length(p_neu)*length(p_neu) + mass*mass); 
-  v.w = 0.f;
+  momentum = momentum + (force * dt * 0.5f);
+  float4 velocity = momentum / sqrt(length(momentum)*length(momentum) + mass*mass); 
+  velocity.w = 0.f;
 
-  p += v * dt * 0.5f;                          /* half time step to new position */
+  position += velocity * dt * 0.5f;                          /* half time step to new position */
 
   /* next half timestep */
-  v = vel_old[i];
-  mass = v.w;
-  v.w = 0.f;
+  momentum = mom_old[i];
+  mass = momentum.w;
+  momentum.w = 0.f;
     
   force = (float4) (0.f, 0.f, 0.f, 0.f);
   for (uint j = 0; j < PARTICLE_NUMBER; ++j) {
     const float4 other_pos = pos_old[j];
     other_pos.w = 0.f;
     const float4 other_col = color[j];
-    force += PROP * normalize(p - other_pos) * cornell(c, other_col);
+    force += PROP * normalize(position - other_pos) * cornell(c, other_col);
   }
-  p_neu = (mass * v * 1.f/sqrt(EPS+1.f - length(v)*length(v)))+(force * dt);
-  
-  v = p_neu / sqrt(length(p_neu)*length(p_neu) + mass*mass); 
-  v.w = 0.f;
+
+  momentum = momentum + (force * dt * 0.5f);
+  velocity = momentum / sqrt(length(momentum)*length(momentum) + mass*mass); 
+  velocity.w = 0.f;
 
 
-  p = pos_old[i] + v * dt;
+  position = pos_old[i] + velocity * dt;
   
-  p.w = 1.f;
-  v.w = mass;
-  pos_new[i] = p;
-  vel_new[i] = v;
+  position.w = 1.f;
+  momentum.w = mass;
+  pos_new[i] = position;
+  mom_new[i] = momentum;
   cum_force[i] = force;
 }
