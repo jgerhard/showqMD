@@ -67,7 +67,7 @@ def create_baryon(partonA, partonB, partonC, kappa=0.87):
     posB = partonB[0:3]
     posB = np.hstack(([0.0], posB))
     posC = partonC[0:3]
-    posC = np.hstack(([0.0], posB))
+    posC = np.hstack(([0.0], posC))
 
     # Calculation of parton 4-momenta in CF
     momA = partonA[4:7]         
@@ -108,4 +108,4 @@ def create_baryon(partonA, partonB, partonC, kappa=0.87):
     # Boosting back to CF
     baryon_mom = lorentz(-frame_vel, lrf_baryon_mom)
     baryon_pos = 1./3. * (posA[1:] + posB[1:] + posC[1:])
-    return np.hstack((meson_pos, meson_mom))
+    return np.hstack((baryon_pos, baryon_mom))
