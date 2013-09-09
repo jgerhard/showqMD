@@ -7,9 +7,9 @@ from create_hadrons import create_meson
 #max number of particles
 maxnum = 6000 
 #time step for integration
-dt = 1e-2
+dt = 1e-5
 #number of timesteps
-run_time = 100                  # run time in fm/c
+run_time = 10                  # run time in fm/c
 save_time = 0.1               # timesteps to be saved in fm/c
 
 class Simulation():
@@ -52,30 +52,30 @@ class Simulation():
         
         (pos, col, mommass, force) = self.cle.pullData()
         partons = concatenate((pos, mommass, force, col),1)
-        return create_meson(*partons)
+        distance, meson = create_meson(*partons)
+        return distance, meson
 
 
-if __name__ == "__main__":
-    masses = []
+def run():
+    mesons = []
+    distances = []
     MyRun = Simulation()
-    mom = MyRun.hadronize()[3:7]
-    mass = sqrt(mom[0]**2 - mom[1]**2 - mom[2]**2 - mom[3]**2)
-    masses.append(mass)
-    print
-    print("Initial Mass: %f" %mass)
-    
+    distance, meson = MyRun.hadronize()
+    mesons.append(meson)
+    distances.append(distance)
     print("Simulating %f fm/c"%run_time)
     
     while (MyRun.totaltime < run_time):
         MyRun.run(MyRun.totaltime + save_time)
-        mom = MyRun.hadronize()[3:7]
-        mass = sqrt(mom[0]**2 - mom[1]**2 - mom[2]**2 - mom[3]**2)
-        masses.append(mass)
+        distance, meson = MyRun.hadronize()
+        mesons.append(meson)
+        distances.append(distance)
         MyRun.save()
-    import pylab as pl
-    pl.plot(masses)
-    pl.show()
+    return distances, mesons
 
+
+if __name__ == "__main__":
+    momenta = run()
 
     
 

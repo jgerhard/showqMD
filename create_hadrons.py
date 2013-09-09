@@ -48,7 +48,6 @@ def create_meson(partonA, partonB, kappa=0.87):
 
     lrf_delta_pos = (lorentz(frame_vel, posA-posB))[1:] # ignore time distance (as is random)
     distance = np.sqrt(np.dot(lrf_delta_pos, lrf_delta_pos))
-
     E_pot = kappa * distance
 
     lrf_meson_mom = np.array([E + E_pot, 0, 0, 0]) # this is the momentum of the meson in LRF
