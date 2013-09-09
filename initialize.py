@@ -1,6 +1,9 @@
 import numpy as np
 from UrQMDfilter import readfile, separate_hadrons, make_partonlist
-from random import choice, sample
+from random import choice, sample, seed
+
+seed(42)                 # make same colours for independent runs
+np.random.seed(42)       # make momenta point to same direction
 
 def fountain_urqmd(maxnum , filename="test.f14", eventnumber=0, parton_mass = 0.01):
     """ Create partons from UrQMD inputfile "filename"
@@ -46,9 +49,9 @@ def fountain_urqmd(maxnum , filename="test.f14", eventnumber=0, parton_mass = 0.
         
 
 
-    mom[:,3] =  parton_mass
+    mom[:,3] =  parton_mass     # (px, py, pz, *) |-> (px, py, pz, m)
 
-    return pos, col, mom
+    return pos[-4:-2], col[-4:-2], mom[-4:-2]
 
 def fountain_np(num):
     """ initialize 400 baryons and 500 mesons with 300 MeV energy """

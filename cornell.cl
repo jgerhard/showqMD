@@ -41,7 +41,7 @@ __kernel void nbody(__global float4* pos_old,
   float4 momentum = mom_old[i];
   float mass = momentum.w;
   momentum.w = 0.f;
-  position.w = 0.f;
+
   
   const float4 c = color[i];
 
@@ -54,10 +54,11 @@ __kernel void nbody(__global float4* pos_old,
     force += PROP * normalize(position - other_pos) * cornell(c, other_col);
   }
 
-
+  // force.w should be 0 here - hence momentum.w rests 0
   momentum = momentum + (force * dt * 0.5f);
-  float4 velocity = momentum / sqrt(length(momentum)*length(momentum) + mass*mass); 
-  velocity.w = 0.f;
+  
+  float4 velocity = momentum / sqrt(dot(momentum, momentum) + mass*mass); 
+  velocity.w = 0.f;                     /* this should not be neccessary */
 
   position += velocity * dt * 0.5f;                          /* half time step to new position */
 
@@ -75,7 +76,7 @@ __kernel void nbody(__global float4* pos_old,
   }
 
   momentum = momentum + (force * dt * 0.5f);
-  velocity = momentum / sqrt(length(momentum)*length(momentum) + mass*mass); 
+  velocity = momentum / sqrt(dot(momentum,momentum) + mass*mass); 
   velocity.w = 0.f;
 
 

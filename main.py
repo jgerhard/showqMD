@@ -1,14 +1,15 @@
 import physics
 import initialize
 import time
-from numpy import savetxt, concatenate
+from numpy import savetxt, concatenate, sqrt
+from create_hadrons import create_meson
 
 #max number of particles
 maxnum = 6000 
 #time step for integration
-dt = 5e-3
+dt = 1e-2
 #number of timesteps
-run_time = 10                  # run time in fm/c
+run_time = 100                  # run time in fm/c
 save_time = 0.1               # timesteps to be saved in fm/c
 
 class Simulation():
@@ -29,7 +30,8 @@ class Simulation():
     
     def save(self, fname="output.csv", one_file=True, step_number=0):
         """ Outputs data into fname as csv file. If not one_file
-        different files with step_number in their name are created """
+        different files with step_number in their name are created
+        Data is of format (t, x,y,z, px,py,pz, m, c1,c2,c3, fx,fy,fz"""
         (pos, col, mom, force) = self.cle.pullData()
         liste = []
         for i in range(len(pos)):
@@ -48,23 +50,34 @@ class Simulation():
     def hadronize(self):
         """ Experimental isochronal hadronization on host """
         
-        (pos, col, mom, force) = self.cle.pullData()
-        return concatenate((pos, mom, force, col),1)
+        (pos, col, mommass, force) = self.cle.pullData()
+        partons = concatenate((pos, mommass, force, col),1)
+        return create_meson(*partons)
 
 
 if __name__ == "__main__":
+    masses = []
     MyRun = Simulation()
+    mom = MyRun.hadronize()[3:7]
+    mass = sqrt(mom[0]**2 - mom[1]**2 - mom[2]**2 - mom[3]**2)
+    masses.append(mass)
+    print
+    print("Initial Mass: %f" %mass)
+    
     print("Simulating %f fm/c"%run_time)
-    # i = 0
-    # while (MyRun.totaltime < run_time):
-    #     MyRun.run(MyRun.totaltime + save_time)
-    #     i += 1
-    #     MyRun.save(fname="output%d.csv", one_file=False, step_number=i)
-    then = time.time()          # standard is time.clock()
-    MyRun.run(run_time)
-    walltime = time.time() - then
-    print("Run took %f sec"%walltime)
-    Result = MyRun.save()
+    
+    while (MyRun.totaltime < run_time):
+        MyRun.run(MyRun.totaltime + save_time)
+        mom = MyRun.hadronize()[3:7]
+        mass = sqrt(mom[0]**2 - mom[1]**2 - mom[2]**2 - mom[3]**2)
+        masses.append(mass)
+        MyRun.save()
+    import pylab as pl
+    pl.plot(masses)
+    pl.show()
+
+
+    
 
 
 
