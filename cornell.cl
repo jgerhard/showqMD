@@ -75,7 +75,7 @@ __kernel void nbody(__global float4* pos_old,
     force += PROP * normalize(position - other_pos) * cornell(c, other_col);
   }
 
-  momentum = momentum + (force * dt * 0.5f);
+  momentum = momentum + (force * dt);   /* in second half step go full dt! */
   velocity = momentum / sqrt(dot(momentum,momentum) + mass*mass); 
   velocity.w = 0.f;
 
