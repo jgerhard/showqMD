@@ -15,124 +15,97 @@ def lorentz(beta, fourVector):
 
     return np.dot(Lambda, fourVector)
 
-def create_meson(partonA, partonB):
-    """ Takes position, velocity, and mass from two partons
+def create_meson(partonA, partonB, kappa=0.87):
+    """ Takes position, 3momentum, and mass from two partons
     and creates meson. Potential energy between partons is converted
     to mass of meson, cumulative momentum in CF is momentum of meson  """
 
     # position of meson is in middle of both partons
-    pos = (partonA[0:3] + partonB[0:3]) * 0.5
+    posA = partonA[0:3]
+    posA = np.hstack(([0.0], posA)) # time component of 4-position not necessary, random number
+    posB = partonB[0:3]
+    posB = np.hstack(([0.0], posB))
 
-    # Calculation of parton 4-momenta
-    velA = partonA[3:7]         # this is now (v_x, v_y, v_z, m_0)
-    gammaA = 1./np.sqrt(1-(velA[0]**2 + velA[1]**2 + velA[2]**2))
-    pxA = gammaA * velA[-1] * velA[0]
-    pyA = gammaA * velA[-1] * velA[1]
-    pzA = gammaA * velA[-1] * velA[2]
-    momA = np.array(np.sqrt(vel[-1]**2 + px**2 + py**2 + pz**2), px, py, pz)
-
-    velB = partonB[3:7]         # this is now (v_x, v_y, v_z, m_0)
-    gammaB = 1./np.sqrt(1-(velB[0]**2 + velB[1]**2 + velB[2]**2))
-    pxB = gammaB * velB[-1] * velB[0]
-    pyB = gammaB * velB[-1] * velB[1]
-    pzB = gammaB * velB[-1] * velB[2]
-    momB = np.array(np.sqrt(vel[-1]**2 + px**2 + py**2 + pz**2), px, py, pz)
-
-
+    # Calculation of parton 4-momenta in CF
+    momA = partonA[4:7]         
+    massA = partonA[7] 
+    EnA = np.sqrt(np.dot(momA, momA) + massA**2)
+    momA = np.hstack((EnA, momA)) # valid 4-momentum
     
-
-    p_parton1 = np.array([0,0,0,0], dtype=np.float32)
-    p_parton1[0] = mass_meson * 0.5
-    p_parton1[1] = r * np.sin(phi) * np.cos(theta)
-    p_parton1[2] = r * np.sin(phi) * np.sin(theta)
-    p_parton1[3] = r * np.cos(phi)
-
-    p_parton2 = np.array([0,0,0,0], dtype=np.float32)
-    p_parton2[0] = mass_meson * 0.5
-    p_parton2[1] = -r * np.sin(phi) * np.cos(theta)
-    p_parton2[2] = -r * np.sin(phi) * np.sin(theta)
-    p_parton2[3] = -r * np.cos(phi)
-
-    # CF Calculation of Momentum
-
-    v_meson = np.array(meson[4:7]) / meson[3]
-    p_meson = np.array(meson[3:7])
-
-
-    p_parton1 = lorentz(-v_meson, p_parton1)
-    p_parton2 = lorentz(-v_meson, p_parton2)
+    momB = partonB[4:7]
+    massB = partonB[7]
+    EnB = np.sqrt(np.dot(momB, momB) + massB**2)
+    momB = np.hstack((EnB, momB))
     
-    # Chose color at random
-
-    c_parton1 = choice([x + [1] for x in [ [0,0,1], [0,1,0], [1,0,0] ] ])
-    c_parton2 = create_anti(c_parton1)
-    c_parton1 = np.array(c_parton1, dtype=np.float32)
-    c_parton2 = np.array(c_parton2, dtype=np.float32)
-
-    # return each parton as np.array
-
-    parton1 = [pos, p_parton1, c_parton1]
-    parton2 = [pos, p_parton2, c_parton2]
-
-    return parton1, parton2
-
-def create_triplet(baryon, mass_parton=0.01):
-    """ Takes position, momentum, and mass from baryon
-    and creates parton triplet with same
-    energy in LRF and same momentum of CF.
-    Standard mass of parton is 0.01 GeV"""
-
-    # position for partons is same as baryon's position in cf
-    pos = np.array(baryon[0:3] + [1], dtype=np.float32)
-
-
-    # LRF Calculation of Energy
-    mass_baryon = baryon[-1]
-
-    r = np.sqrt(((mass_baryon/3.)**2 - mass_parton**2))
-    phi = np.random.rand()*2*np.pi
-    theta = np.random.rand()*2*np.pi
+    frame_vel = ((momA + momB) / (EnA + EnB))[1:] # beta for CF -> CMS 
     
-    p_parton1 = np.array([0,0,0,0], dtype=np.float32)
-    p_parton1[0] = mass_baryon/3.
-    p_parton1[1] = r * np.sin(phi) * np.cos(theta)
-    p_parton1[2] = r * np.sin(phi) * np.sin(theta)
-    p_parton1[3] = r * np.cos(phi)
+    # Calculation of Hadron Energy in LRF
 
-    r = np.sqrt(((mass_baryon/3.)**2 - mass_parton**2))
-    phi = np.random.rand()*2*np.pi
-    theta = np.random.rand()*2*np.pi
-   
-    p_parton2 = np.array([0,0,0,0], dtype=np.float32)
-    p_parton2[0] = mass_baryon/3.
-    p_parton2[1] = r * np.sin(phi) * np.cos(theta)
-    p_parton2[2] = r * np.sin(phi) * np.sin(theta)
-    p_parton2[3] = r * np.cos(phi)
+    lrf_momA = lorentz(frame_vel, momA)
+    lrf_momB = lorentz(frame_vel, momB)
 
-    p_parton3 = -p_parton1 - p_parton2
-    p_parton3[0] = mass_baryon/3.
+    E = (lrf_momA + lrf_momB)[0] # this is sqrt(p^2 + m^2)
 
-    # CF Calculation of Momentum
+    lrf_delta_pos = lorentz(frame_vel, posA-posB)[1:] # ignore time distance (as is random)
+    E_pot = kappa * np.sqrt(np.dot(lrf_delta_pos, lrf_delta_pos)) # additional energy from string
+    lrf_meson_mom = np.array([E + E_pot, 0, 0, 0]) # this is the momentum of the meson in LRF
 
-    v_baryon = np.array(baryon[4:7]) / baryon[3]
-    p_baryon = np.array(baryon[3:7])
+    # Boosting back to CF
+    meson_mom = lorentz(-frame_vel, lrf_meson_mom)
+    meson_pos = 0.5 * (posA[1:] + posB[1:])
+    return np.hstack((meson_pos, meson_mom))
 
-    p_parton1 = lorentz(-v_baryon, p_parton1)
-    p_parton2 = lorentz(-v_baryon, p_parton2)
-    p_parton3 = lorentz(-v_baryon, p_parton3)
 
-    # set color r,g,b (momenta at random, though no bias introduced)
+def create_baryon(partonA, partonB, partonC, kappa=0.87):
+    """ Takes position, velocity, and mass from two partons
+    and creates meson. Potential energy between partons is converted
+    to mass of meson, cumulative momentum in CF is momentum of meson  """
 
-    c_parton1 = np.array([0,0,1,1], dtype=np.float32)
-    c_parton2 = np.array([0,1,0,1], dtype=np.float32)
-    c_parton3 = np.array([1,0,0,1], dtype=np.float32)
+    # position of baryon is in middle 
+    posA = partonA[0:3]
+    posA = np.hstack(([0.0], posA)) # time component of 4-position not necessary, random number
+    posB = partonB[0:3]
+    posB = np.hstack(([0.0], posB))
+    posC = partonC[0:3]
+    posC = np.hstack(([0.0], posB))
 
-    # return each parton as np.array
-
-    parton1 = [pos, p_parton1, c_parton1]
-    parton2 = [pos, p_parton2, c_parton2]
-    parton3 = [pos, p_parton3, c_parton3]
-
-    return parton1, parton2, parton3
-
+    # Calculation of parton 4-momenta in CF
+    momA = partonA[4:7]         
+    massA = partonA[7] 
+    EnA = np.sqrt(np.dot(momA, momA) + massA**2)
+    momA = np.hstack((EnA, momA)) # valid 4-momentum
     
+    momB = partonB[4:7]
+    massB = partonB[7]
+    EnB = np.sqrt(np.dot(momB, momB) + massB**2)
+    momB = np.hstack((EnB, momB))
+
+    momC = partonC[4:7]
+    massC = partonC[7]
+    EnC = np.sqrt(np.dot(momC, momC) + massC**2)
+    momC = np.hstack((EnC, momC))
+    
+    frame_vel = ((momA + momB + momC) / (EnA + EnB + EnB))[1:] # beta for CF -> CMS 
+    
+    # Calculation of Hadron Energy in LRF
+
+    lrf_momA = lorentz(frame_vel, momA)
+    lrf_momB = lorentz(frame_vel, momB)
+    lrf_momC = lorentz(frame_vel, momC)
+
+    E = (lrf_momA + lrf_momB + lrf_momC)[0] # this is sqrt(p^2 + m^2)
+    
+    lrf_delta_pos_ab = lorentz(frame_vel, posA-posB)[1:] # ignore time distance (as is random)
+    lrf_delta_pos_bc = lorentz(frame_vel, posB-posC)[1:] # ignore time distance (as is random)
+    lrf_delta_pos_ca = lorentz(frame_vel, posC-posA)[1:] # ignore time distance (as is random)
+    dist_ab = np.sqrt(np.dot(lrf_delta_pos_ab, lrf_delta_pos_ab))
+    dist_bc = np.sqrt(np.dot(lrf_delta_pos_bc, lrf_delta_pos_bc))
+    dist_ca = np.sqrt(np.dot(lrf_delta_pos_ca, lrf_delta_pos_ca))
+    E_pot = 0.5 * kappa * (dist_ab + dist_bc + dist_ca)
+
+    lrf_baryon_mom = np.array([E + E_pot, 0, 0, 0]) # this is the momentum of the baryon in LRF
+
+    # Boosting back to CF
+    baryon_mom = lorentz(-frame_vel, lrf_baryon_mom)
+    baryon_pos = 1./3. * (posA[1:] + posB[1:] + posC[1:])
+    return np.hstack((meson_pos, meson_mom))
