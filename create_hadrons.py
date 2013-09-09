@@ -46,14 +46,17 @@ def create_meson(partonA, partonB, kappa=0.87):
 
     E = (lrf_momA + lrf_momB)[0] # this is sqrt(p^2 + m^2)
 
-    lrf_delta_pos = lorentz(frame_vel, posA-posB)[1:] # ignore time distance (as is random)
-    E_pot = kappa * np.sqrt(np.dot(lrf_delta_pos, lrf_delta_pos)) # additional energy from string
+    lrf_delta_pos = (lorentz(frame_vel, posA-posB))[1:] # ignore time distance (as is random)
+    distance = np.sqrt(np.dot(lrf_delta_pos, lrf_delta_pos))
+
+    E_pot = kappa * distance
+
     lrf_meson_mom = np.array([E + E_pot, 0, 0, 0]) # this is the momentum of the meson in LRF
     # Boosting back to CF
     meson_mom = lorentz(-frame_vel, lrf_meson_mom)
     meson_pos = 0.5 * (posA[1:] + posB[1:])
 
-    return np.hstack((meson_pos, meson_mom))
+    return distance, np.hstack((meson_pos, meson_mom))
 
 
 def create_baryon(partonA, partonB, partonC, kappa=0.87):
