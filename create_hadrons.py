@@ -37,7 +37,7 @@ def create_meson(partonA, partonB, kappa=0.87):
     EnB = np.sqrt(np.dot(momB, momB) + massB**2)
     momB = np.hstack((EnB, momB))
     
-    frame_vel = ((momA + momB) / (EnA + EnB))[1:] # beta for CF -> CMS 
+    frame_vel = ((momA + momB) / (EnA + EnB))[1:] # beta for CF -> LRF
     
     # Calculation of Hadron Energy in LRF
 
@@ -57,9 +57,9 @@ def create_meson(partonA, partonB, kappa=0.87):
 
 
 def create_baryon(partonA, partonB, partonC, kappa=0.87):
-    """ Takes position, velocity, and mass from two partons
-    and creates meson. Potential energy between partons is converted
-    to mass of meson, cumulative momentum in CF is momentum of meson  """
+    """ Takes position, 3momentum, and mass from three partons
+    and creates baryon. Potential energy between partons is converted
+    to mass of baryon, cumulative momentum in CF is momentum of baryon  """
 
     # position of baryon is in middle 
     posA = partonA[0:3]
@@ -78,14 +78,14 @@ def create_baryon(partonA, partonB, partonC, kappa=0.87):
     momB = partonB[4:7]
     massB = partonB[7]
     EnB = np.sqrt(np.dot(momB, momB) + massB**2)
-    momB = np.hstack((EnB, momB))
+    momB = np.hstack((EnB, momB)) # valid 4-momentum
 
     momC = partonC[4:7]
     massC = partonC[7]
     EnC = np.sqrt(np.dot(momC, momC) + massC**2)
-    momC = np.hstack((EnC, momC))
+    momC = np.hstack((EnC, momC)) # valid 4-momentum
     
-    frame_vel = ((momA + momB + momC) / (EnA + EnB + EnB))[1:] # beta for CF -> CMS 
+    frame_vel = ((momA + momB + momC) / (EnA + EnB + EnC))[1:] # beta for CF -> LRF
     
     # Calculation of Hadron Energy in LRF
 
@@ -101,7 +101,7 @@ def create_baryon(partonA, partonB, partonC, kappa=0.87):
     dist_ab = np.sqrt(np.dot(lrf_delta_pos_ab, lrf_delta_pos_ab))
     dist_bc = np.sqrt(np.dot(lrf_delta_pos_bc, lrf_delta_pos_bc))
     dist_ca = np.sqrt(np.dot(lrf_delta_pos_ca, lrf_delta_pos_ca))
-    E_pot = 0.5 * kappa * (dist_ab + dist_bc + dist_ca)
+    E_pot = 0.5 * kappa * (dist_ab + dist_bc + dist_ca) # Force between different colours is half of force between q q\bar
 
     lrf_baryon_mom = np.array([E + E_pot, 0, 0, 0]) # this is the momentum of the baryon in LRF
 
