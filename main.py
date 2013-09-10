@@ -76,6 +76,7 @@ def run():
         distances.append(distance)
         Es.append(E)
         E_pots.append(E_pot)
+        MyRun.save()
     return distances, Es, E_pots, mesons
 
 

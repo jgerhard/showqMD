@@ -1,11 +1,14 @@
 import numpy as np
 from random import choice
 
-def lorentz(beta, fourVector):
+def lorentz(beta, fourVector, EPS = 1e-5):
     """ Takes as input relative beta from O -> O'
     and calculates fourVector -> fourVector' """
 
     beta2 = np.dot(beta, beta)
+    if (beta2 <= EPS):
+        return fourVector
+        
     gamma = 1./np.sqrt(1. - beta2)
     
     Lambda = np.array([ [gamma, -gamma*beta[0], -gamma*beta[1], -gamma*beta[2]],
