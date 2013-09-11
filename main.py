@@ -7,10 +7,10 @@ from create_hadrons import create_meson
 #max number of particles
 maxnum = 6000 
 #time step for integration
-dt = 1e-4
+dt = 1e-3                       # 1e-4 leaves mass of meson at hadronization constant for all timesteps
 #number of timesteps
-run_time = 1                  # run time in fm/c
-save_time = 0.02               # timesteps to be saved in fm/c
+run_time = 5                  # run time in fm/c
+save_time = 0.1               # timesteps to be saved in fm/c
 
 class Simulation():
     def __init__(self, maxnum=maxnum, dt=dt):
@@ -52,44 +52,20 @@ class Simulation():
         
         (pos, mommass, col, force) = self.cle.pullData()
         partons = concatenate((pos, mommass, force, col),1)
-        distance, E, E_pot, meson = create_meson(*partons)
-        return distance, E, E_pot, meson
+        
 
 
 def run():
-    mesons = []
-    distances = []
-    Es = []
-    E_pots = []
-    MyRun = Simulation()
-    distance, E, E_pot, meson = MyRun.hadronize()
-    mesons.append(meson)
-    distances.append(distance)
-    Es.append(E)
-    E_pots.append(E_pot)
     print("Simulating %f fm/c"%run_time)
-    
+    MyRun = Simulation()
     while (MyRun.totaltime < run_time):
         MyRun.run(MyRun.totaltime + save_time)
-        distance, E, E_pot, meson = MyRun.hadronize()
-        mesons.append(meson)
-        distances.append(distance)
-        Es.append(E)
-        E_pots.append(E_pot)
         MyRun.save()
-    return distances, Es, E_pots, mesons
+
 
 
 if __name__ == "__main__":
-    dists, Es, E_pots, mesons = run()
-    import pylab as pl
-    pl.plot(dists, label="Distance")
-    pl.plot(E_pots, label="Potential Energy")
-    pl.plot(Es, label="Kinetic + Mass")
-    Masses = [pl.sqrt(meson[3]**2 - meson[4]**2 - meson[5]**2 - meson[6]**2) for meson in mesons]
-    pl.plot(Masses, '+')
-    pl.legend(loc=0)
-    pl.show()
+    run()
 
     
 

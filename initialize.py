@@ -48,7 +48,7 @@ def fountain_urqmd(maxnum , filename="test.f14", eventnumber=0, parton_mass = 0.
         col[i] = partons[i][2]
         
 
-    return pos[-4:-2],  mom[-4:-2], col[-4:-2]
+    return pos,  mom, col
 
 def fountain_np(num):
     """ initialize 400 baryons and 500 mesons with 300 MeV energy """
