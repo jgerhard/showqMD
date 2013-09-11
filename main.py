@@ -15,11 +15,11 @@ save_time = 0.02               # timesteps to be saved in fm/c
 class Simulation():
     def __init__(self, maxnum=maxnum, dt=dt):
         #set up initial conditions
-        (pos, col, vel) = initialize.fountain(maxnum)
-        num = len(vel)
+        (pos, mommass, col) = initialize.fountain(maxnum)
+        num = len(pos)
         #create our OpenCL instance
         self.cle = physics.Particles(num, dt)
-        self.cle.pushData(pos, col, vel)
+        self.cle.pushData(pos, mommass, col)
         self.totaltime = self.cle.totaltime
 
 
