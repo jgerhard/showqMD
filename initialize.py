@@ -44,7 +44,7 @@ def fountain_urqmd(maxnum , filename="test.f14", eventnumber=0, parton_mass = 0.
     col = np.ndarray((len(partons), 4), dtype=np.float32)
     for i in range(len(pos)):
         pos[i] = partons[i][0]
-        mom[i] = partons[i][1][
+        mom[i] = partons[i][1]
         col[i] = partons[i][2]
         
 
