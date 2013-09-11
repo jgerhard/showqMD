@@ -46,7 +46,6 @@ __kernel void nbody(__global float4* pos_old,
   
   const float4 c = color[i];
 
-
   float4 force = (float4) (0.f, 0.f, 0.f, 0.f);
   for (uint j = 0; j < PARTICLE_NUMBER; ++j) {
     const float4 other_pos = pos_old[j];
@@ -55,30 +54,9 @@ __kernel void nbody(__global float4* pos_old,
     force += PROP * normalize(position - other_pos) * cornell(c, other_col);
   }
 
-  /* // force.w should be 0 here - hence momentum.w rests 0 */
-  /* momentum += force * dt * 0.5f; */
-
-  /* float4 velocity = momentum / sqrt(dot(momentum, momentum) + mass*mass); */
-  /* //  printf("(%f,%f,%f,%f)\n",velocity.x,velocity.y,velocity.z,velocity.w); */
-  /* position += velocity * dt * 0.5f;                          /\* half time step to new position *\/ */
-
-  /* /\* next half timestep *\/ */
-  /* momentum = mom_old[i]; */
-  /* mass = momentum.w; */
-  /* momentum.w = 0.f; */
-    
-  /* force = (float4) (0.f, 0.f, 0.f, 0.f); */
-  /* for (uint j = 0; j < PARTICLE_NUMBER; ++j) { */
-  /*   const float4 other_pos = pos_old[j]; */
-  /*   other_pos.w = 0.f; */
-  /*   const float4 other_col = color[j]; */
-  /*   force += PROP * fast_normalize(position - other_pos) * cornell(c, other_col); */
-  /* } */
-
-  momentum += force * dt;   /* in second half step go full dt! */
-
-  float4 velocity = momentum / sqrt(dot(momentum,momentum) + mass*mass);
-  position = pos_old[i] + velocity * dt;
+  momentum += force * dt;
+  float4 velocity = momentum / sqrt(dot(momentum, momentum) + mass*mass);
+  position += velocity * dt;
 
   momentum.w = mass;
   pos_new[i] = position;
