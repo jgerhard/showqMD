@@ -42,14 +42,14 @@ __kernel void nbody(__global float4* pos_old,
   float4 momentum = mom_old[i];
   float mass = momentum.w;
   momentum.w = 0.f;
-  position.w = 0.f;
+  //  position.w = 0.f;
   
   const float4 c = color[i];
 
   float4 force = (float4) (0.f, 0.f, 0.f, 0.f);
   for (uint j = 0; j < PARTICLE_NUMBER; ++j) {
     const float4 other_pos = pos_old[j];
-    other_pos.w = 0.f;
+    //    other_pos.w = 0.f;
     const float4 other_col = color[j];
     force += PROP * normalize(position - other_pos) * cornell(c, other_col);
   }
