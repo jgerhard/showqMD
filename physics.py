@@ -45,7 +45,7 @@ class Particles(object):
         cl.enqueue_copy(self.queue, self.mom_A, self.mom_A_cl)
         cl.enqueue_copy(self.queue, self.col, self.col_cl)
         cl.enqueue_copy(self.queue, self.force, self.cum_force)
-        return (self.pos_A, self.col, self.mom_A, self.force)
+        return (self.pos_A, self.mom_A, self.col, self.force)
         
         
 

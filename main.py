@@ -32,7 +32,7 @@ class Simulation():
         """ Outputs data into fname as csv file. If not one_file
         different files with step_number in their name are created
         Data is of format (t, x,y,z, px,py,pz, m, c1,c2,c3, fx,fy,fz"""
-        (pos, col, mom, force) = self.cle.pullData()
+        (pos, mom, col, force) = self.cle.pullData()
         liste = []
         for i in range(len(pos)):
             current = concatenate(([self.totaltime],pos[i][0:3], mom[i], col[i][0:3], force[i][0:3]))
@@ -50,7 +50,7 @@ class Simulation():
     def hadronize(self):
         """ Experimental isochronal hadronization on host """
         
-        (pos, col, mommass, force) = self.cle.pullData()
+        (pos, mommass, col, force) = self.cle.pullData()
         partons = concatenate((pos, mommass, force, col),1)
         distance, E, E_pot, meson = create_meson(*partons)
         return distance, E, E_pot, meson
