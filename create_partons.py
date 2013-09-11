@@ -120,7 +120,9 @@ def create_triplet(baryon, mass_parton=0.01):
     p_parton1 = lorentz(-v_baryon, p_parton1)
     p_parton2 = lorentz(-v_baryon, p_parton2)
     p_parton3 = lorentz(-v_baryon, p_parton3)
-
+    p_parton1 = np.hstack((p_parton1[1:4], [mass_parton])) # (E, px, py, pz) |-> (px, py, pz, m)
+    p_parton2 = np.hstack((p_parton2[1:4], [mass_parton])) # (E, px, py, pz) |-> (px, py, pz, m)
+    p_parton3 = np.hstack((p_parton3[1:4], [mass_parton])) # (E, px, py, pz) |-> (px, py, pz, m)
     # set color r,g,b (momenta at random, though no bias introduced)
 
     c_parton1 = np.array([0,0,1,1], dtype=np.float32)
