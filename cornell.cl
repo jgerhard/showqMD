@@ -24,7 +24,8 @@ inline float cornell(float4 my_color, float4 its_color)
     return -1.f/3.f;                    /* q + -q */
   return 1.f/6.f;                       /* -rg; -rb; b-g; b-r; g-r; g-b */
 
-}  
+}
+
 
 __kernel void nbody(__global float4* pos_old, 
                     __global float4* mom_old,
@@ -41,7 +42,7 @@ __kernel void nbody(__global float4* pos_old,
   float4 momentum = mom_old[i];
   float mass = momentum.w;
   momentum.w = 0.f;
-
+  position.w = 0.f;
   
   const float4 c = color[i];
 
@@ -54,35 +55,31 @@ __kernel void nbody(__global float4* pos_old,
     force += PROP * normalize(position - other_pos) * cornell(c, other_col);
   }
 
-  // force.w should be 0 here - hence momentum.w rests 0
-  momentum = momentum + (force * dt * 0.5f);
-  
-  float4 velocity = momentum / sqrt(dot(momentum, momentum) + mass*mass); 
-  velocity.w = 0.f;                     /* this should not be neccessary */
+  /* // force.w should be 0 here - hence momentum.w rests 0 */
+  /* momentum += force * dt * 0.5f; */
 
-  position += velocity * dt * 0.5f;                          /* half time step to new position */
+  /* float4 velocity = momentum / sqrt(dot(momentum, momentum) + mass*mass); */
+  /* //  printf("(%f,%f,%f,%f)\n",velocity.x,velocity.y,velocity.z,velocity.w); */
+  /* position += velocity * dt * 0.5f;                          /\* half time step to new position *\/ */
 
-  /* next half timestep */
-  momentum = mom_old[i];
-  mass = momentum.w;
-  momentum.w = 0.f;
+  /* /\* next half timestep *\/ */
+  /* momentum = mom_old[i]; */
+  /* mass = momentum.w; */
+  /* momentum.w = 0.f; */
     
-  force = (float4) (0.f, 0.f, 0.f, 0.f);
-  for (uint j = 0; j < PARTICLE_NUMBER; ++j) {
-    const float4 other_pos = pos_old[j];
-    other_pos.w = 0.f;
-    const float4 other_col = color[j];
-    force += PROP * normalize(position - other_pos) * cornell(c, other_col);
-  }
+  /* force = (float4) (0.f, 0.f, 0.f, 0.f); */
+  /* for (uint j = 0; j < PARTICLE_NUMBER; ++j) { */
+  /*   const float4 other_pos = pos_old[j]; */
+  /*   other_pos.w = 0.f; */
+  /*   const float4 other_col = color[j]; */
+  /*   force += PROP * fast_normalize(position - other_pos) * cornell(c, other_col); */
+  /* } */
 
-  momentum = momentum + (force * dt);   /* in second half step go full dt! */
-  velocity = momentum / sqrt(dot(momentum,momentum) + mass*mass); 
-  velocity.w = 0.f;
+  momentum += force * dt;   /* in second half step go full dt! */
 
-
+  float4 velocity = momentum / sqrt(dot(momentum,momentum) + mass*mass);
   position = pos_old[i] + velocity * dt;
-  
-  position.w = 1.f;
+
   momentum.w = mass;
   pos_new[i] = position;
   mom_new[i] = momentum;
