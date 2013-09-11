@@ -100,7 +100,7 @@ def fountain_np(num):
     
 
 def fountain(num, method = fountain_urqmd):
-    pos, col, mom = method(num)
-    return (pos, col, mom)
+    pos, col, mommass = method(num)
+    return (pos, mommass, col)
 
 
