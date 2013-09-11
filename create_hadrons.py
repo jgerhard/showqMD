@@ -34,7 +34,7 @@ def create_meson(partonA, partonB, kappa=0.87):
     E = (lrf_momA + lrf_momB)[0] # this is sqrt(p^2 + m^2)
 
     lrf_delta_pos = (lorentz(frame_vel, posA-posB))[1:] # ignore time distance (as is random)
-    lrf_delta_pos = (posA-posB)[1:]
+
     distance = np.sqrt(np.dot(lrf_delta_pos, lrf_delta_pos))
     E_pot = kappa * distance
 

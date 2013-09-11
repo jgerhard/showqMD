@@ -57,6 +57,9 @@ class Particles(object):
                 local_size_threads = i
 
 
+        local_size_threads = 1
+
+
         local_size = (local_size_threads,)
 
         kernelargs = (self.pos_A_cl, 

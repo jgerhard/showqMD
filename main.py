@@ -7,9 +7,9 @@ from create_hadrons import create_meson
 #max number of particles
 maxnum = 6000 
 #time step for integration
-dt = 1e-3
+dt = 1e-4
 #number of timesteps
-run_time = 5                  # run time in fm/c
+run_time = 1                  # run time in fm/c
 save_time = 0.02               # timesteps to be saved in fm/c
 
 class Simulation():
@@ -86,7 +86,8 @@ if __name__ == "__main__":
     pl.plot(dists, label="Distance")
     pl.plot(E_pots, label="Potential Energy")
     pl.plot(Es, label="Kinetic + Mass")
-    pl.plot(pl.array(E_pots) + pl.array(Es), '*')
+    Masses = [pl.sqrt(meson[3]**2 - meson[4]**2 - meson[5]**2 - meson[6]**2) for meson in mesons]
+    pl.plot(Masses, '+')
     pl.legend(loc=0)
     pl.show()
 
