@@ -28,7 +28,7 @@ def create_duplet(meson, mass_parton=0.01):
     Standard mass of parton is 0.01 GeV, colour chosen at random """
 
     # position for both partons is same as meson's position in cf
-    pos = np.array(meson[0:3] + [1], dtype=np.float32)
+    pos = np.array(meson[0:3] + [0], dtype=np.float32)
 
     # LRF Calculation of Energy
     mass_meson = meson[-1]
@@ -83,7 +83,7 @@ def create_triplet(baryon, mass_parton=0.01):
     Standard mass of parton is 0.01 GeV"""
 
     # position for partons is same as baryon's position in cf
-    pos = np.array(baryon[0:3] + [1], dtype=np.float32)
+    pos = np.array(baryon[0:3] + [0], dtype=np.float32)
 
 
     # LRF Calculation of Energy
