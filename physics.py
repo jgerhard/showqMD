@@ -14,16 +14,16 @@ class Particles(object):
         self.force = np.zeros((num, 4), dtype=np.float32) 
 
 
-    def pushData(self, pos, col, mom):
+    def pushData(self, pos, mommass, col):
         """ Pushes particle data from host to device """
         mf = cl.mem_flags
 
         self.pos_A = pos
-        self.mom_A = mom
+        self.mom_A = mommass
         self.col = col
 
         self.pos_B = pos
-        self.mom_B = mom
+        self.mom_B = mommass
 
 
         #pure OpenCL arrays
