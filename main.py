@@ -53,35 +53,22 @@ class Simulation():
         (pos, mommass, col, force) = self.cle.pullData()
         partons = concatenate((pos, mommass, force, col),1)
         if len(partons) == 3:
-            E, E_pot, hadron = create_baryon(*partons)
+            hadron = create_baryon(*partons)
         else:
-            E, E_pot, hadron = create_meson(*partons)
-        return E, E_pot, hadron
+            hadron = create_meson(*partons)
+        return hadron
 
 
 def run():
     print("Simulating %f fm/c"%run_time)
     MyRun = Simulation()
-    Es = []
-    E_pots = []
     while (MyRun.totaltime < run_time):
         MyRun.run(MyRun.totaltime + save_time)
-        E, E_pot, baryon = MyRun.hadronize()
-        Es.append(E)
-        E_pots.append(E_pot)
         MyRun.save()
-    return Es, E_pots
 
 
 if __name__ == "__main__":
-    Es, E_pots = run()
-    import pylab as pl
-    pl.plot(Es, label="Kinetic + PartonMass")
-    pl.plot(E_pots, label="Potential")
-    pl.plot(pl.array(Es) + pl.array(E_pots), '+')
-    pl.legend()
-    pl.show()
-    
+    run()
 
 
 
