@@ -75,7 +75,7 @@ def create_baryon(partonA, partonB, partonC, kappa=0.87):
     EnC = np.sqrt(np.dot(momC, momC) + massC**2)
     momC = np.hstack((EnC, momC)) # valid 4-momentum
     
-    frame_vel = (0.95*(momA + momB + momC) / (EnA + EnB + EnC))[1:] # beta for CF -> LRF
+    frame_vel = ((momA + momB + momC) / (EnA + EnB + EnC))[1:] # beta for CF -> LRF
     
     # Calculation of Hadron Energy in LRF
 
@@ -98,4 +98,4 @@ def create_baryon(partonA, partonB, partonC, kappa=0.87):
     # Boosting back to CF
     baryon_mom = lorentz(-frame_vel, lrf_baryon_mom)
     baryon_pos = 1./3. * (posA[1:] + posB[1:] + posC[1:])
-    return np.hstack((baryon_pos, baryon_mom))
+    return E, E_pot,np.hstack((baryon_pos, baryon_mom))

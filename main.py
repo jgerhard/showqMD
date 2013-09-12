@@ -7,10 +7,10 @@ from create_hadrons import create_meson, create_baryon
 #max number of particles
 maxnum = 6000 
 #time step for integration
-dt = 1e-6                      # 1e-4 leaves mass of meson at hadronization constant for all timesteps
+dt = 1e-3                      # 1e-4 leaves mass of meson at hadronization constant for all timesteps
 #number of timesteps
 run_time = 1                  # run time in fm/c
-save_time = 0.001               # timesteps to be saved in fm/c
+save_time = 0.01               # timesteps to be saved in fm/c
 
 class Simulation():
     def __init__(self, maxnum=maxnum, dt=dt):
@@ -52,7 +52,10 @@ class Simulation():
         
         (pos, mommass, col, force) = self.cle.pullData()
         partons = concatenate((pos, mommass, force, col),1)
-        E, E_pot, hadron = create_meson(*partons)
+        if len(partons) == 3:
+            E, E_pot, hadron = create_baryon(*partons)
+        else:
+            E, E_pot, hadron = create_meson(*partons)
         return E, E_pot, hadron
 
 
