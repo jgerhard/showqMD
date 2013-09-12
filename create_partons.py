@@ -32,7 +32,6 @@ def create_duplet(meson, mass_parton=0.01):
 
     # LRF Calculation of Energy
     mass_meson = meson[-1]
-
     r = np.sqrt((mass_meson**2 * 0.25 - mass_parton**2))
     phi = np.random.rand()*2*np.pi
     theta = np.random.rand()*2*np.pi

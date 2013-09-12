@@ -2,15 +2,15 @@ import physics
 import initialize
 import time
 from numpy import savetxt, concatenate, sqrt
-from create_hadrons import create_meson
+from create_hadrons import create_meson, create_baryon
 
 #max number of particles
 maxnum = 6000 
 #time step for integration
-dt = 1e-3                       # 1e-4 leaves mass of meson at hadronization constant for all timesteps
+dt = 1e-6                      # 1e-4 leaves mass of meson at hadronization constant for all timesteps
 #number of timesteps
-run_time = 5                  # run time in fm/c
-save_time = 0.1               # timesteps to be saved in fm/c
+run_time = 1                  # run time in fm/c
+save_time = 0.001               # timesteps to be saved in fm/c
 
 class Simulation():
     def __init__(self, maxnum=maxnum, dt=dt):
@@ -52,21 +52,32 @@ class Simulation():
         
         (pos, mommass, col, force) = self.cle.pullData()
         partons = concatenate((pos, mommass, force, col),1)
-        
+        E, E_pot, hadron = create_meson(*partons)
+        return E, E_pot, hadron
 
 
 def run():
     print("Simulating %f fm/c"%run_time)
     MyRun = Simulation()
+    Es = []
+    E_pots = []
     while (MyRun.totaltime < run_time):
         MyRun.run(MyRun.totaltime + save_time)
+        E, E_pot, baryon = MyRun.hadronize()
+        Es.append(E)
+        E_pots.append(E_pot)
         MyRun.save()
-
+    return Es, E_pots
 
 
 if __name__ == "__main__":
-    run()
-
+    Es, E_pots = run()
+    import pylab as pl
+    pl.plot(Es, label="Kinetic + PartonMass")
+    pl.plot(E_pots, label="Potential")
+    pl.plot(pl.array(Es) + pl.array(E_pots), '+')
+    pl.legend()
+    pl.show()
     
 
 

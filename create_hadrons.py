@@ -43,7 +43,7 @@ def create_meson(partonA, partonB, kappa=0.87):
     meson_mom = lorentz(-frame_vel, lrf_meson_mom)
     meson_pos = 0.5 * (posA + posB)
 
-    return np.hstack((meson_pos[1:], meson_mom))
+    return E, E_pot, np.hstack((meson_pos[1:], meson_mom))
 
 
 def create_baryon(partonA, partonB, partonC, kappa=0.87):
