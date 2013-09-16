@@ -91,7 +91,7 @@ def create_candidates(all_partons, max_dist = 1.0, MAXITER = None):
     print("--------------------")
     
     i = 0
-    MAXITER = 1e5
+    MAXITER = 1e3
 
     while ( (all_partons) and (i < MAXITER) ):
         i += 1
