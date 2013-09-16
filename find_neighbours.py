@@ -30,7 +30,11 @@ def create_candidates(all_partons, max_dist = 1.0, MAXITER = None):
     subdivides to meson and baryon candidates.
     Firstly excludes all partons with more 
     than 1.0 fm/c distance"""
-
+    
+    print
+    print("--------------------")
+    print("Hadronization...")
+    
     mesons = []
     baryons = []
     i = 0
@@ -45,7 +49,6 @@ def create_candidates(all_partons, max_dist = 1.0, MAXITER = None):
         candidates.sort(cmp=compare)
 
         if candidates and (is_white(X, candidates[0])): # meson case
-            print("Meson case")
             mesons.append(create_meson(X, candidates[0]))
             all_partons.remove(candidates[0])
         elif len(candidates)>1 and (is_white(X, candidates[0], candidates[1])): # baryon case
@@ -60,7 +63,7 @@ def create_candidates(all_partons, max_dist = 1.0, MAXITER = None):
     print("Found Baryons: %d" %len(baryons))
     print("Found Mesons: %d" %len(mesons))
     print("Partons left over: %d" %len(all_partons))
-
+    print("--------------------")
     i = 0
     max_dist = 5.0
     MAXITER = 10 * len(all_partons)
@@ -73,7 +76,6 @@ def create_candidates(all_partons, max_dist = 1.0, MAXITER = None):
         candidates.sort(cmp=compare)
 
         if candidates and (is_white(X, candidates[0])): # meson case
-            print("Meson case")
             mesons.append(create_meson(X, candidates[0]))
             all_partons.remove(candidates[0])
         elif len(candidates)>1 and (is_white(X, candidates[0], candidates[1])): # baryon case
@@ -87,19 +89,18 @@ def create_candidates(all_partons, max_dist = 1.0, MAXITER = None):
     print("Found Baryons: %d" %len(baryons))
     print("Found Mesons: %d" %len(mesons))
     print("Partons left over: %d" %len(all_partons))
+    print("--------------------")
     
     i = 0
-    MAXITER = 10 * len(all_partons)
+    MAXITER = 1e5
 
     while ( (all_partons) and (i < MAXITER) ):
         i += 1
         X = all_partons.pop(0)
         dist, compare = create_measure(X)
-        candidates = all_partons
+        candidates = filter(lambda(x): True, all_partons)
         candidates.sort(cmp=compare)
-
         if candidates and (is_white(X, candidates[0])): # meson case
-            print("Meson case")
             mesons.append(create_meson(X, candidates[0]))
             all_partons.remove(candidates[0])
         elif len(candidates)>1 and (is_white(X, candidates[0], candidates[1])): # baryon case
@@ -108,11 +109,14 @@ def create_candidates(all_partons, max_dist = 1.0, MAXITER = None):
             all_partons.remove(candidates[1])
         else:
             all_partons.append(X)   # did not find correct neighbours yet
+
     
     print("ignore max distance")
     print("Found Baryons: %d" %len(baryons))
     print("Found Mesons: %d" %len(mesons))
     print("Partons left over: %d" %len(all_partons))
+    print("--------------------")
+    return baryons, mesons
     
 
 
