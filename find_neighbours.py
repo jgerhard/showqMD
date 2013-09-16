@@ -116,15 +116,28 @@ def create_candidates(all_partons, max_dist = 1.0, MAXITER = None):
     print("Found Mesons: %d" %len(mesons))
     print("Partons left over: %d" %len(all_partons))
     print("--------------------")
-    print("Combinatorical search")
-    while all_partons:
-        candidates = combinations(all_partons, 2)
-        if is_white(candidates[0], candidates[1]):
-            mesons.append(create_meson(candidates[0], candidates[1]))
-        candidates = combinations(all_partons, 3)
-        if is_white(candidates[0], candidates[1], candidates[2]):
-            baryons.append(create_baryon(candidates[0], candidates[1], candidates[2]))
+    while(all_partons):
+        print("Combinatorical search")
+        meson_candidates = combinations(all_partons, 2)
+        for a, b in meson_candidates:
+            if is_white(a,b):
+                mesons.append(create_meson(a,b))
+                all_partons.remove(a)
+                all_partons.remove(b)
+                break
+        baryon_candidates = combinations(all_partons, 3)
+        for a,b,c in baryon_candidates:
+            if is_white(a,b,c):
+                baryons.append(create_baryon(a,b,c))
+                all_partons.remove(a)
+                all_partons.remove(b)
+                all_partons.remove(c)
+                break
 
+    print("Found Baryons: %d" %len(baryons))
+    print("Found Mesons: %d" %len(mesons))
+    print("Partons left over: %d" %len(all_partons))
+    print("--------------------")
     return baryons, mesons
     
 
