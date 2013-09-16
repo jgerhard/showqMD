@@ -1,5 +1,6 @@
 from numpy import sqrt
 from create_hadrons import *
+from itertools import combinations
 def create_measure(parton):
     """ creates a distance to given parton function """
     def delta(other):
@@ -91,7 +92,7 @@ def create_candidates(all_partons, max_dist = 1.0, MAXITER = None):
     print("--------------------")
     
     i = 0
-    MAXITER = 1e3
+    MAXITER = 10 * len(all_partons)
 
     while ( (all_partons) and (i < MAXITER) ):
         i += 1
@@ -115,6 +116,15 @@ def create_candidates(all_partons, max_dist = 1.0, MAXITER = None):
     print("Found Mesons: %d" %len(mesons))
     print("Partons left over: %d" %len(all_partons))
     print("--------------------")
+    print("Combinatorical search")
+    while all_partons:
+        candidates = combinations(all_partons, 2)
+        if is_white(candidates[0], candidates[1]):
+            mesons.append(create_meson(candidates[0], candidates[1]))
+        candidates = combinations(all_partons, 3)
+        if is_white(candidates[0], candidates[1], candidates[2]):
+            baryons.append(create_baryon(candidates[0], candidates[1], candidates[2]))
+
     return baryons, mesons
     
 
