@@ -7,7 +7,7 @@ from find_neighbours import create_candidates
 #max number of particles
 maxnum = 6000
 #time step for integration
-dt = 1e-3                      # 1e-4 leaves mass of meson at hadronization constant for all timesteps
+dt = 1e-4                      # 1e-4 leaves mass of meson at hadronization constant for all timesteps
 #number of timesteps
 run_time = 10                  # run time in fm/c
 save_time = 0.05               # timesteps to be saved in fm/c
