@@ -1,5 +1,4 @@
 from numpy import sqrt
-from pprint import pprint
 from create_hadrons import *
 def create_measure(parton):
     """ creates a distance to given parton function """
