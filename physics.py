@@ -84,6 +84,7 @@ class Particles(object):
             self.totaltime += 2*self.dt
             sys.stdout.write("\r t = {0} fm/c>".format(self.totaltime))
             sys.stdout.flush() 
+            print
 
 
  
