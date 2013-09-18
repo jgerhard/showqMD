@@ -35,7 +35,8 @@ def create_candidates(all_partons, max_dist = 1.0, MAXITER = None):
     print("--------------------")
     print("Hadronization...")
     print("Method: nearest neighbour")
-    print("1 fm/c distance max")
+    print("--------------------")
+    print("    1 fm/c distance max")
     mesons = []
     baryons = []
     i = 0
@@ -59,14 +60,15 @@ def create_candidates(all_partons, max_dist = 1.0, MAXITER = None):
         else:
             all_partons.append(X)   # did not find correct neighbours yet
    
+    if all_partons:
+        print("    Partons left over: %d" %len(all_partons))
+        print("------------------------")
 
-    print("Partons left over: %d" %len(all_partons))
-    print("--------------------")
     i = 0
     max_dist = 5.0
     MAXITER = 10 * len(all_partons)
     if all_partons:
-        print("5 fm/c distance max")
+        print("     5 fm/c distance max")
     while ( (all_partons) and (i < MAXITER) ):
         i += 1
         X = all_partons.pop(0)
@@ -84,12 +86,12 @@ def create_candidates(all_partons, max_dist = 1.0, MAXITER = None):
         else:
             all_partons.append(X)   # did not find correct neighbours yet
     
-    
-
-    print("Partons left over: %d" %len(all_partons))
-    print("--------------------")
     if all_partons:
-        print("ignore max distance")
+        print("    Partons left over: %d" %len(all_partons))
+        print("------------------------")
+
+    if all_partons:
+        print("    ignore max distance")
 
     i = 0
     MAXITER = 10 * len(all_partons)
@@ -110,8 +112,9 @@ def create_candidates(all_partons, max_dist = 1.0, MAXITER = None):
         else:
             all_partons.append(X)   # did not find correct neighbours yet
 
-    print("Partons left over: %d" %len(all_partons))
-    print("--------------------")
+    if all_partons:
+        print("    Partons left over: %d" %len(all_partons))
+        print("------------------------")
     
     if all_partons:
         print("Method: Combinatorical search")
@@ -132,10 +135,13 @@ def create_candidates(all_partons, max_dist = 1.0, MAXITER = None):
                 all_partons.remove(b)
                 all_partons.remove(c)
                 break
-
-    print("Partons left over: %d" %len(all_partons))
-    print("--------------------")
-
+    if all_partons:
+        print("    Partons left over: %d" %len(all_partons))
+        print("------------------------")
+    else:
+        print("------------------------")
+        print("|  ALL PARTONS GROUPED |")
+        print("------------------------")
     return baryons, mesons
     
 
