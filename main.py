@@ -9,7 +9,7 @@ maxnum = 6000
 #time step for integration
 dt = 1e-4                      # 1e-4 leaves mass of meson at hadronization constant for all timesteps
 #number of timesteps
-run_time = 10                  # run time in fm/c
+run_time = 1                  # run time in fm/c
 save_time = 0.1               # timesteps to be saved in fm/c
 
 class Simulation():
@@ -35,7 +35,7 @@ class Simulation():
         (pos, mom, col, force) = self.cle.pullData()
         liste = []
         for i in range(len(pos)):
-            current = concatenate(([self.totaltime],pos[i][0:3], mom[i], col[i][0:3], force[i][0:3]))
+            current = concatenate(([self.totaltime],pos[i][0:3], mom[i], col[i][0:3])) #, force[i][0:3]))
             liste.append(current)
         if one_file:
             f_handle = file(fname, 'a')
@@ -43,38 +43,31 @@ class Simulation():
             f_handle.close()
         else:
             savetxt(fname%step_number, liste, delimiter=",")
-    
+        
     def hadronize(self):
         """ Experimental isochronal hadronization on host """
         
         (pos, mommass, col, force) = self.cle.pullData()
         partons = list(concatenate( (pos, mommass, force, col) ,1).tolist())
         baryons, mesons = create_candidates(partons)
-        return baryons, mesons
-
-
-def run():
-    print("Simulating %f fm/c"%run_time)
-    MyRun = Simulation()
-    MyRun.save()
-    baryons, mesons = MyRun.hadronize()
-    hadrons = baryons + mesons
-    savedata = []
-    savedata.append( append(MyRun.totaltime, hadrons))
-    f_handle = file("hadrons.csv", 'a')
-    MyRun.save()
-    while(MyRun.totaltime <= run_time):
-        MyRun.run(MyRun.totaltime + save_time)
-        baryons, mesons = MyRun.hadronize()
         hadrons = baryons + mesons
-        savedata.append( append(MyRun.totaltime, hadrons))
-        MyRun.save()
+        liste = []
+        for hadron in hadrons:
+            current = concatenate(([self.totaltime],hadron))
+            liste.append(current)
+        f_handle = file("hadrons.csv", 'a')
+        savetxt(f_handle, liste, delimiter=",")
+        f_handle.close()
 
-    savetxt(f_handle, savedata, delimiter=",")
-    f_handle.close()
+
 
 if __name__ == "__main__":
-    run()
+    MyRun = Simulation()
+    MyRun.save()
+    MyRun.hadronize()
+    MyRun.run(run_time)
+    MyRun.save()
+    MyRun.hadronize()
     
     
 
