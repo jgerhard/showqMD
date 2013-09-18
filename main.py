@@ -58,14 +58,16 @@ def run():
     MyRun = Simulation()
     MyRun.save()
     baryons, mesons = MyRun.hadronize()
+    hadrons = baryons + mesons
     savedata = []
-    savedata.append( append(MyRun.totaltime, mesons))
+    savedata.append( append(MyRun.totaltime, hadrons))
     f_handle = file("hadrons.csv", 'a')
     MyRun.save()
     while(MyRun.totaltime <= run_time):
         MyRun.run(MyRun.totaltime + save_time)
         baryons, mesons = MyRun.hadronize()
-        savedata.append( append(MyRun.totaltime, mesons))
+        hadrons = baryons + mesons
+        savedata.append( append(MyRun.totaltime, hadrons))
         MyRun.save()
 
     savetxt(f_handle, savedata, delimiter=",")
