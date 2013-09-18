@@ -7,10 +7,10 @@ from find_neighbours import create_candidates
 #max number of particles
 maxnum = 6000
 #time step for integration
-dt = 1e-4                      # 1e-4 leaves mass of meson at hadronization constant for all timesteps
+dt = 1e-3                      # 1e-4 leaves mass of meson at hadronization constant for all timesteps
 #number of timesteps
-run_time = 1                  # run time in fm/c
-save_time = 0.1               # timesteps to be saved in fm/c
+run_time = 10                  # run time in fm/c
+save_time = 0.5               # timesteps to be saved in fm/c
 
 class Simulation():
     def __init__(self, maxnum=maxnum, dt=dt):
@@ -65,9 +65,10 @@ if __name__ == "__main__":
     MyRun = Simulation()
     MyRun.save()
     MyRun.hadronize()
-    MyRun.run(run_time)
-    MyRun.save()
-    MyRun.hadronize()
+    while MyRun.totaltime < run_time:
+        MyRun.run(MyRun.totaltime+save_time)
+        MyRun.save()
+        MyRun.hadronize()
     
     
 
