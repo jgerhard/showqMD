@@ -1,7 +1,7 @@
 import physics
 import initialize
 import time
-from numpy import savetxt, concatenate, sqrt
+from numpy import savetxt, concatenate, sqrt, append
 from find_neighbours import create_candidates
     
 #max number of particles
@@ -10,7 +10,7 @@ maxnum = 6000
 dt = 1e-4                      # 1e-4 leaves mass of meson at hadronization constant for all timesteps
 #number of timesteps
 run_time = 10                  # run time in fm/c
-save_time = 0.05               # timesteps to be saved in fm/c
+save_time = 0.1               # timesteps to be saved in fm/c
 
 class Simulation():
     def __init__(self, maxnum=maxnum, dt=dt):
@@ -37,13 +37,10 @@ class Simulation():
         for i in range(len(pos)):
             current = concatenate(([self.totaltime],pos[i][0:3], mom[i], col[i][0:3], force[i][0:3]))
             liste.append(current)
-    
         if one_file:
-            try:
-                f_handle = file(fname, 'a')
-                savetxt(f_handle, liste, delimiter=",")
-            except:
-                savetxt(fname, liste, delimiter=",")
+            f_handle = file(fname, 'a')
+            savetxt(f_handle, liste, delimiter=",")
+            f_handle.close()
         else:
             savetxt(fname%step_number, liste, delimiter=",")
     
@@ -59,10 +56,20 @@ class Simulation():
 def run():
     print("Simulating %f fm/c"%run_time)
     MyRun = Simulation()
-    MyRun.run(run_time)
     MyRun.save()
     baryons, mesons = MyRun.hadronize()
-    savetxt("hadrons.csv", baryons+mesons, delimiter=",")
+    savedata = []
+    savedata.append( append(MyRun.totaltime, mesons))
+    f_handle = file("hadrons.csv", 'a')
+    MyRun.save()
+    while(MyRun.totaltime <= run_time):
+        MyRun.run(MyRun.totaltime + save_time)
+        baryons, mesons = MyRun.hadronize()
+        savedata.append( append(MyRun.totaltime, mesons))
+        MyRun.save()
+
+    savetxt(f_handle, savedata, delimiter=",")
+    f_handle.close()
 
 if __name__ == "__main__":
     run()
