@@ -68,7 +68,7 @@ def create_candidates(all_partons, max_dist = 1.0, MAXITER = None):
     max_dist = 5.0
     MAXITER = 10 * len(all_partons)
     if all_partons:
-        print("     5 fm/c distance max")
+        print("    5 fm/c distance max")
     while ( (all_partons) and (i < MAXITER) ):
         i += 1
         X = all_partons.pop(0)
