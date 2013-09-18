@@ -24,7 +24,7 @@ def create_meson(partonA, partonB, kappa=0.87):
     EnB = np.sqrt(np.dot(momB, momB) + massB**2)
     momB = np.hstack((EnB, momB))
     
-    frame_vel = 0.95 * ((momA + momB) / (EnA + EnB))[1:] # beta for CF -> LRF (0.95* to stabilize)
+    frame_vel = ((momA + momB) / (EnA + EnB))[1:] # beta for CF -> LRF (0.95* to stabilize)
     
     # Calculation of Hadron Energy in CMF
 
@@ -32,17 +32,19 @@ def create_meson(partonA, partonB, kappa=0.87):
     lrf_momB = lorentz(frame_vel, momB)
 
     E = (lrf_momA + lrf_momB)[0] # this is sqrt(p^2 + m^2)
+    
+    lrf_meson_mom = np.array([E, 0, 0, 0]) # this is the momentum of the meson in LRF
 
-    lrf_delta_pos = (lorentz(frame_vel, posA-posB))[1:] # ignore time distance (as is random)
-
-    distance = np.sqrt(np.dot(lrf_delta_pos, lrf_delta_pos))
-    E_pot = kappa * distance
-
-    lrf_meson_mom = np.array([E + E_pot, 0, 0, 0]) # this is the momentum of the meson in LRF
     # Boosting back to CF
     meson_mom = lorentz(-frame_vel, lrf_meson_mom)
     meson_pos = 0.5 * (posA + posB)
 
+    # Add Energy in Field between partons in CF
+    delta_pos = (posA - posB)[1:]
+    distance = np.sqrt(np.dot(delta_pos, delta_pos))
+    E_pot = kappa * distance
+
+    meson_mom[0] += E_pot
     return np.hstack((meson_pos[1:], meson_mom))
 
 
@@ -84,18 +86,19 @@ def create_baryon(partonA, partonB, partonC, kappa=0.87):
     lrf_momC = lorentz(frame_vel, momC)
 
     E = (lrf_momA + lrf_momB + lrf_momC)[0] # this is sqrt(p^2 + m^2)
-    
-    lrf_delta_pos_ab = lorentz(frame_vel, posA-posB)[1:] # ignore time distance (as is random)
-    lrf_delta_pos_bc = lorentz(frame_vel, posB-posC)[1:] # ignore time distance (as is random)
-    lrf_delta_pos_ca = lorentz(frame_vel, posC-posA)[1:] # ignore time distance (as is random)
-    dist_ab = np.sqrt(np.dot(lrf_delta_pos_ab, lrf_delta_pos_ab))
-    dist_bc = np.sqrt(np.dot(lrf_delta_pos_bc, lrf_delta_pos_bc))
-    dist_ca = np.sqrt(np.dot(lrf_delta_pos_ca, lrf_delta_pos_ca))
-    E_pot = 0.5 * kappa * (dist_ab + dist_bc + dist_ca) # Force between different colours is half of force between q q\bar
-
-    lrf_baryon_mom = np.array([E + E_pot, 0, 0, 0]) # this is the momentum of the baryon in LRF
+    lrf_baryon_mom = np.array([E, 0, 0, 0]) # this is the momentum of the baryon in LRF
 
     # Boosting back to CF
     baryon_mom = lorentz(-frame_vel, lrf_baryon_mom)
+
+    # Calculating Energy in Field between Partons
+    delta_pos_ab = (posA-posB)[1:] # ignore time distance (as is random)
+    delta_pos_bc = (posB-posC)[1:] # ignore time distance (as is random)
+    delta_pos_ca = (posC-posA)[1:] # ignore time distance (as is random)
+    dist_ab = np.sqrt(np.dot(delta_pos_ab, delta_pos_ab))
+    dist_bc = np.sqrt(np.dot(delta_pos_bc, delta_pos_bc))
+    dist_ca = np.sqrt(np.dot(delta_pos_ca, delta_pos_ca))
+    E_pot = 0.5 * kappa * (dist_ab + dist_bc + dist_ca) # Force between different colours is half of force between q q\bar
+
     baryon_pos = 1./3. * (posA[1:] + posB[1:] + posC[1:])
     return np.hstack((baryon_pos, baryon_mom))
