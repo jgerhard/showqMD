@@ -24,7 +24,7 @@ def create_meson(partonA, partonB, kappa=0.87):
     EnB = np.sqrt(np.dot(momB, momB) + massB**2)
     momB = np.hstack((EnB, momB))
     
-    frame_vel = ((momA + momB) / (EnA + EnB))[1:] # beta for CF -> LRF (0.95* to stabilize)
+    frame_vel = ((momA + momB) / (EnA + EnB))[1:] # beta for CF -> LRF 
     
     # Calculation of Hadron Energy in CMF
 
@@ -77,7 +77,7 @@ def create_baryon(partonA, partonB, partonC, kappa=0.87):
     EnC = np.sqrt(np.dot(momC, momC) + massC**2)
     momC = np.hstack((EnC, momC)) # valid 4-momentum
     
-    frame_vel = 0.95 * ((momA + momB + momC) / (EnA + EnB + EnC))[1:] # beta for CF -> LRF
+    frame_vel = ((momA + momB + momC) / (EnA + EnB + EnC))[1:] # beta for CF -> LRF
     
     # Calculation of Hadron Energy in LRF
 
