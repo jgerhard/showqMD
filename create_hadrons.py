@@ -98,7 +98,7 @@ def create_baryon(partonA, partonB, partonC, kappa=0.87):
     dist_ab = np.sqrt(np.dot(delta_pos_ab, delta_pos_ab))
     dist_bc = np.sqrt(np.dot(delta_pos_bc, delta_pos_bc))
     dist_ca = np.sqrt(np.dot(delta_pos_ca, delta_pos_ca))
-    E_pot = 0.5 * kappa * (dist_ab + dist_bc + dist_ca) # Force between different colours is half of force between q q\bar
+    E_pot =  0.5 * kappa * (dist_ab + dist_bc + dist_ca) # Force between different colours is half of force between q q\bar
     baryon_mom[0] += E_pot
     baryon_pos = 1./3. * (posA[1:] + posB[1:] + posC[1:])
     return np.hstack((baryon_pos, baryon_mom))
