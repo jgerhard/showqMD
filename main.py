@@ -44,7 +44,7 @@ class Simulation():
         else:
             savetxt(fname%step_number, liste, delimiter=",")
         
-    def hadronize(self):
+    def hadronize(self, fname="hadrons.csv", one_file=True, step_number=0):
         """ Experimental isochronal hadronization on host """
         
         (pos, mommass, col, force) = self.cle.pullData()
@@ -55,11 +55,12 @@ class Simulation():
         for hadron in hadrons:
             current = concatenate(([self.totaltime],hadron))
             liste.append(current)
-        f_handle = file("hadrons.csv", 'a')
-        savetxt(f_handle, liste, delimiter=",")
-        f_handle.close()
-
-
+        if one_file:
+            f_handle = file(fname, 'a')
+            savetxt(f_handle, liste, delimiter=",")
+            f_handle.close()
+        else:
+            savetxt(fname%step_number, liste, delimiter=",")
 
 if __name__ == "__main__":
     MyRun = Simulation()
