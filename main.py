@@ -48,7 +48,7 @@ class Simulation():
         """ Experimental isochronal hadronization on host """
         
         (pos, mommass, col, force) = self.cle.pullData()
-        partons = list(concatenate( (pos, mommass, col) ,1).tolist()) # force is not needed for output
+        partons = list(concatenate( (pos, mommass, force, col) ,1).tolist()) # force is not needed for output
         baryons, mesons = create_candidates(partons)
         hadrons = baryons + mesons
         liste = []
