@@ -93,7 +93,7 @@ def create_triplet(baryon, mass_parton=0.01):
     phi = np.random.rand()*2*np.pi # offset
     theta = np.random.rand()*2*np.pi
 
-    alpha = phi + np.pi * 0.5
+    alpha = phi 
 
     p_parton1 = np.array([0,0,0,0], dtype=np.float32)
     p_parton1[0] = mass_baryon/3.
@@ -101,7 +101,7 @@ def create_triplet(baryon, mass_parton=0.01):
     p_parton1[2] = r * np.sin(alpha) * np.sin(theta)
     p_parton1[3] = r * np.cos(alpha)
 
-    alpha = phi + np.pi * 7./6.
+    alpha += 2./3. *  np.pi 
 
 
     p_parton2 = np.array([0,0,0,0], dtype=np.float32)
@@ -110,7 +110,7 @@ def create_triplet(baryon, mass_parton=0.01):
     p_parton2[2] = r * np.sin(alpha) * np.sin(theta)
     p_parton2[3] = r * np.cos(alpha)
 
-    alpha = phi + np.pi * 11./6.
+    alpha += 2./3. * np.pi
 
     p_parton3 = np.array([0,0,0,0], dtype=np.float32) 
     p_parton3[0] = mass_baryon/3.
@@ -123,7 +123,6 @@ def create_triplet(baryon, mass_parton=0.01):
     p_parton1 = lorentz(-v_baryon, p_parton1)
     p_parton2 = lorentz(-v_baryon, p_parton2)
     p_parton3 = lorentz(-v_baryon, p_parton3)
-
 
     p_parton1 = np.hstack((p_parton1[1:4], [mass_parton])) # (E, px, py, pz) |-> (px, py, pz, m)
     p_parton2 = np.hstack((p_parton2[1:4], [mass_parton])) # (E, px, py, pz) |-> (px, py, pz, m)
