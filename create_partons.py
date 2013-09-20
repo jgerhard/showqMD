@@ -52,8 +52,6 @@ def create_duplet(meson, mass_parton=0.01):
     # CF Calculation of Momentum
 
     v_meson = np.array(meson[4:7]) / meson[3]
-    p_meson = np.array(meson[3:7])
-
 
     p_parton1 = lorentz(-v_meson, p_parton1)
     p_parton2 = lorentz(-v_meson, p_parton2)
@@ -109,19 +107,19 @@ def create_triplet(baryon, mass_parton=0.01):
     p_parton2[3] = r * np.cos(phi)
 
     p_parton3 = -p_parton1 - p_parton2
-    p_parton3[0] = mass_baryon/3.
-
-    # CF Calculation of Momentum
+    p_parton3[0] = mass_baryon/3. # this is wrong!
 
     v_baryon = np.array(baryon[4:7]) / baryon[3]
-    p_baryon = np.array(baryon[3:7])
 
     p_parton1 = lorentz(-v_baryon, p_parton1)
     p_parton2 = lorentz(-v_baryon, p_parton2)
     p_parton3 = lorentz(-v_baryon, p_parton3)
+
+
     p_parton1 = np.hstack((p_parton1[1:4], [mass_parton])) # (E, px, py, pz) |-> (px, py, pz, m)
     p_parton2 = np.hstack((p_parton2[1:4], [mass_parton])) # (E, px, py, pz) |-> (px, py, pz, m)
     p_parton3 = np.hstack((p_parton3[1:4], [mass_parton])) # (E, px, py, pz) |-> (px, py, pz, m)
+
     # set color r,g,b (momenta at random, though no bias introduced)
 
     c_parton1 = np.array([0,0,1,1], dtype=np.float32)
@@ -133,7 +131,7 @@ def create_triplet(baryon, mass_parton=0.01):
     parton1 = [pos, p_parton1, c_parton1]
     parton2 = [pos, p_parton2, c_parton2]
     parton3 = [pos, p_parton3, c_parton3]
-
+    
     return parton1, parton2, parton3
 
     
