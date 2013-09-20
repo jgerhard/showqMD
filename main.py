@@ -71,7 +71,7 @@ if __name__ == "__main__":
         MyRun.run(MyRun.totaltime+save_time)
         MyRun.save(fname="partons%i.csv", one_file=False, step_number = step)
         MyRun.hadronize(fname="hadrons%i.csv", one_file=False, step_number = step)
-        i += 1
+        step += 1
     
 
 
