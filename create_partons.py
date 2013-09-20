@@ -103,7 +103,6 @@ def create_triplet(baryon, mass_parton=0.01):
 
     alpha += 2./3. *  np.pi 
 
-
     p_parton2 = np.array([0,0,0,0], dtype=np.float32)
     p_parton2[0] = mass_baryon/3.
     p_parton2[1] = r * np.sin(alpha) * np.cos(theta)
