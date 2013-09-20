@@ -48,7 +48,7 @@ class Simulation():
         """ Experimental isochronal hadronization on host """
         
         (pos, mommass, col, force) = self.cle.pullData()
-        partons = list(concatenate( (pos, mommass, force, col) ,1).tolist())
+        partons = list(concatenate( (pos, mommass, col) ,1).tolist()) # force is not needed for output
         baryons, mesons = create_candidates(partons)
         hadrons = baryons + mesons
         liste = []
@@ -66,11 +66,12 @@ if __name__ == "__main__":
     MyRun = Simulation()
     MyRun.save()
     MyRun.hadronize()
+    step = 1
     while MyRun.totaltime < run_time:
         MyRun.run(MyRun.totaltime+save_time)
-        MyRun.save()
-        MyRun.hadronize()
-    
+        MyRun.save(fname="partons%i.csv", one_file=False, step_number = step)
+        MyRun.hadronize(fname="hadrons%i.csv", one_file=False, step_number = step)
+        i += 1
     
 
 
