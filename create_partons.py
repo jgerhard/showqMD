@@ -1,6 +1,9 @@
 import numpy as np
 from random import choice
 
+def Mass(fMom):
+    return np.sqrt(fMom[0]**2 - fMom[1]**2 -fMom[2]**2 -fMom[3]**2)
+
 def lorentz(beta, fourVector, EPS = 1e-5):
     """ Takes as input relative beta from O -> O'
     and calculates fourVector -> fourVector' """
@@ -87,27 +90,33 @@ def create_triplet(baryon, mass_parton=0.01):
     mass_baryon = baryon[-1]
 
     r = np.sqrt(((mass_baryon/3.)**2 - mass_parton**2))
-    phi = np.random.rand()*2*np.pi
+    phi = np.random.rand()*2*np.pi # offset
     theta = np.random.rand()*2*np.pi
-    
+
+    alpha = phi + np.pi * 0.5
+
     p_parton1 = np.array([0,0,0,0], dtype=np.float32)
     p_parton1[0] = mass_baryon/3.
-    p_parton1[1] = r * np.sin(phi) * np.cos(theta)
-    p_parton1[2] = r * np.sin(phi) * np.sin(theta)
-    p_parton1[3] = r * np.cos(phi)
+    p_parton1[1] = r * np.sin(alpha) * np.cos(theta)
+    p_parton1[2] = r * np.sin(alpha) * np.sin(theta)
+    p_parton1[3] = r * np.cos(alpha)
 
-    r = np.sqrt(((mass_baryon/3.)**2 - mass_parton**2))
-    phi = np.random.rand()*2*np.pi
-    theta = np.random.rand()*2*np.pi
-   
+    alpha = phi + np.pi * 7./6.
+
+
     p_parton2 = np.array([0,0,0,0], dtype=np.float32)
     p_parton2[0] = mass_baryon/3.
-    p_parton2[1] = r * np.sin(phi) * np.cos(theta)
-    p_parton2[2] = r * np.sin(phi) * np.sin(theta)
-    p_parton2[3] = r * np.cos(phi)
+    p_parton2[1] = r * np.sin(alpha) * np.cos(theta)
+    p_parton2[2] = r * np.sin(alpha) * np.sin(theta)
+    p_parton2[3] = r * np.cos(alpha)
 
-    p_parton3 = -p_parton1 - p_parton2
-    p_parton3[0] = mass_baryon/3. # this is wrong!
+    alpha = phi + np.pi * 11./6.
+
+    p_parton3 = np.array([0,0,0,0], dtype=np.float32) 
+    p_parton3[0] = mass_baryon/3.
+    p_parton3[1] = r * np.sin(alpha) * np.cos(theta)
+    p_parton3[2] = r * np.sin(alpha) * np.sin(theta)
+    p_parton3[3] = r * np.cos(alpha)
 
     v_baryon = np.array(baryon[4:7]) / baryon[3]
 
