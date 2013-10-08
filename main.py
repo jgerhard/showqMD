@@ -10,7 +10,7 @@ maxnum = 6000
 dt = 1e-3                      # 1e-4 leaves mass of meson at hadronization constant for all timesteps
 #number of timesteps
 run_time = 10                  # run time in fm/c
-save_time = 0.5               # timesteps to be saved in fm/c
+save_time = 0.1               # timesteps to be saved in fm/c
 
 class Simulation():
     def __init__(self, maxnum=maxnum, dt=dt):
@@ -65,13 +65,13 @@ class Simulation():
 if __name__ == "__main__":
     MyRun = Simulation()
     MyRun.save()
-    MyRun.hadronize()
+#    MyRun.hadronize()
     step = 1
     while MyRun.totaltime < run_time:
         MyRun.run(MyRun.totaltime+save_time)
-        MyRun.save(fname="partons%i.csv", one_file=False, step_number = step)
-        MyRun.hadronize(fname="hadrons%i.csv", one_file=False, step_number = step)
-        step += 1
+        MyRun.save(fname="partons.csv", one_file=True, step_number = step)
+#        MyRun.hadronize(fname="hadrons%i.csv", one_file=False, step_number = step)
+ 
     
 
 
