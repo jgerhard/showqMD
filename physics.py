@@ -56,7 +56,7 @@ class Particles(object):
             if (self.num % i == 0) :
                 local_size_threads = i
 
-        if self.totaltime = 0.0: # only announce in very first step
+        if self.totaltime == 0.0: # only announce in very first step
             print("Using %d different work-groups for computation!"%local_size_threads)
         local_size = (local_size_threads,)
 
