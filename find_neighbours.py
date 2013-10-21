@@ -25,29 +25,15 @@ def is_white(*partons):
     return (total_colour == [1,1,1]) or (total_colour == [2,2,2]) # 222 is the anti_baryon case
     
 
-def create_candidates(all_partons, max_dist = 1.0, MAXITER = None):
-    """ Takes list of all partons and 
-    subdivides to meson and baryon candidates.
-    Firstly excludes all partons with more 
-    than 1.0 fm/c distance"""
+def group(all_partons, mesons, baryons, MAXDISTANCE, MAXITER):
     
-    print
-    print("--------------------")
-    print("Hadronization...")
-    print("Method: nearest neighbour")
-    print("--------------------")
-    print("    1 fm/c distance max")
-    mesons = []
-    baryons = []
     i = 0
-    if (not MAXITER):
-        MAXITER = 10 * len(all_partons)
-
     while ( (all_partons) and (i < MAXITER) ):
         i += 1
         X = all_partons.pop(0)
         dist, compare = create_measure(X)
-        candidates = filter( lambda z: (dist(z) <= max_dist), all_partons)
+
+        candidates = filter( lambda z: (dist(z) <= MAXDISTANCE), all_partons)
         candidates.sort(cmp=compare)
 
         if candidates and (is_white(X, candidates[0])): # meson case
@@ -60,65 +46,8 @@ def create_candidates(all_partons, max_dist = 1.0, MAXITER = None):
         else:
             all_partons.append(X)   # did not find correct neighbours yet
    
-    if all_partons:
-        print("    Partons left over: %d" %len(all_partons))
-        print("------------------------")
 
-    i = 0
-    max_dist = 5.0
-    MAXITER = 10 * len(all_partons)
-    if all_partons:
-        print("    5 fm/c distance max")
-    while ( (all_partons) and (i < MAXITER) ):
-        i += 1
-        X = all_partons.pop(0)
-        dist, compare = create_measure(X)
-        candidates = filter( lambda z: (dist(z) <= max_dist), all_partons)
-        candidates.sort(cmp=compare)
-
-        if candidates and (is_white(X, candidates[0])): # meson case
-            mesons.append(create_meson(X, candidates[0]))
-            all_partons.remove(candidates[0])
-        elif len(candidates)>1 and (is_white(X, candidates[0], candidates[1])): # baryon case
-            baryons.append(create_baryon(X, candidates[0], candidates[1]))
-            all_partons.remove(candidates[0])
-            all_partons.remove(candidates[1])
-        else:
-            all_partons.append(X)   # did not find correct neighbours yet
-    
-    if all_partons:
-        print("    Partons left over: %d" %len(all_partons))
-        print("------------------------")
-
-    if all_partons:
-        print("    ignore max distance")
-
-    i = 0
-    MAXITER = 10 * len(all_partons)
-
-    while ( (all_partons) and (i < MAXITER) ):
-        i += 1
-        X = all_partons.pop(0)
-        dist, compare = create_measure(X)
-        candidates = filter(lambda(x): True, all_partons)
-        candidates.sort(cmp=compare)
-        if candidates and (is_white(X, candidates[0])): # meson case
-            mesons.append(create_meson(X, candidates[0]))
-            all_partons.remove(candidates[0])
-        elif len(candidates)>1 and (is_white(X, candidates[0], candidates[1])): # baryon case
-            baryons.append(create_baryon(X, candidates[0], candidates[1]))
-            all_partons.remove(candidates[0])
-            all_partons.remove(candidates[1])
-        else:
-            all_partons.append(X)   # did not find correct neighbours yet
-
-    if all_partons:
-        print("    Partons left over: %d" %len(all_partons))
-        print("------------------------")
-    
-    if all_partons:
-        print("Method: Combinatorical search")
-
+def combine(all_partons, mesons, baryons):
     while(all_partons):
         meson_candidates = combinations(all_partons, 2)
         for a, b in meson_candidates:
@@ -135,8 +64,47 @@ def create_candidates(all_partons, max_dist = 1.0, MAXITER = None):
                 all_partons.remove(b)
                 all_partons.remove(c)
                 break
+        delta, _ = create_measure(a)
+        print("Distance %f fm/c"%delta(b))
+   
+
+
+def create_candidates(all_partons, max_dist = 1.0, MAXITER = None):
+    """ Takes list of all partons and 
+    subdivides to meson and baryon candidates.
+    Firstly excludes all partons with more 
+    than 1.0 fm/c distance"""
+    
+    print
+    print("Hadronization...")
+    print("--------------------")
+    print("Method: nearest neighbour")
+    print("--------------------")
+
+    mesons = []
+    baryons = []
+    if (not MAXITER):
+        MAXITER = 3 * len(all_partons)
+
+    max_dist = 0.0
+    while(all_partons and (max_dist < 5.0)):
+        max_dist += 0.5
+        print("%f fm/c distance max"%max_dist)
+        group(all_partons, mesons, baryons, max_dist, MAXITER)
+        
     if all_partons:
         print("    Partons left over: %d" %len(all_partons))
+        print("------------------------")
+        print("Method: Combinatorical search")
+        print("--------------------")
+        print("    arbitrary distance")
+
+    combine(all_partons, mesons, baryons)
+
+    if all_partons:
+        print("------------------------")
+        print("    Partons left over: %d !!!" %len(all_partons))
+        print("------------------------")
         print("------------------------")
     else:
         print("------------------------")
