@@ -48,6 +48,7 @@ def fountain_urqmd(maxnum , filename="test.f14", eventnumber=0, parton_mass = 0.
         col[i] = partons[i][2]
         
     return pos, mom, col
+#    return pos[:3], mom[:3], col[:3]
 
 
 def fountain_np(num):
