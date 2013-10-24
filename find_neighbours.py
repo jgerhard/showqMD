@@ -1,6 +1,7 @@
 from numpy import sqrt
 from create_hadrons import *
 from itertools import combinations
+
 def create_measure(parton):
     """ creates a distance to given parton function """
     def delta(other):
@@ -12,8 +13,6 @@ def create_measure(parton):
     def cmp(X, Y):
         return(1 if (delta(X) < delta(Y)) else -1)
     return delta, cmp
-
-
 
 def is_white(*partons):
 
@@ -84,11 +83,11 @@ def create_candidates(all_partons, max_dist = 1.0, MAXITER = None):
     mesons = []
     baryons = []
     if (not MAXITER):
-        MAXITER = 3 * len(all_partons)
+        MAXITER = 10 * len(all_partons)
 
     max_dist = 0.0
-    while(all_partons and (max_dist < 5.0)):
-        max_dist += 0.5
+    while(all_partons and (max_dist < 3.0)):
+        max_dist += 1
         print("%f fm/c distance max"%max_dist)
         group(all_partons, mesons, baryons, max_dist, MAXITER)
         
