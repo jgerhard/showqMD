@@ -1,6 +1,9 @@
 import numpy as np
 from random import choice
 
+u, d, s = 0.0023, 0.0048, 0.095 # quark masses in GeV
+
+
 def Mass(fMom):
     return np.sqrt(fMom[0]**2 - fMom[1]**2 -fMom[2]**2 -fMom[3]**2)
 
@@ -24,17 +27,18 @@ def lorentz(beta, fourVector, EPS = 1e-5):
 def create_anti(particle):
     return [1 - x for x in particle[:-1]] + [1]
 
-def create_duplet(meson, mass_parton=0.01):
-    """ Takes position, momentum, and mass from meson
+def create_duplet(meson):
+    """ Takes position, momentum, mass, itype, isospin, and charge from meson
     and creates parton antiparton duplet with same
     energy in LRF and same momentum of CF.
-    Standard mass of parton is 0.01 GeV, colour chosen at random """
+    Masses of partons are chosen according to itype and charge,
+    colour chosen at random """
 
     # position for both partons is same as meson's position in cf
     pos = np.array(meson[0:3] + [0], dtype=np.float32)
 
     # LRF Calculation of Energy
-    mass_meson = meson[-1]
+    mass_meson = meson[-4]
     r = np.sqrt((mass_meson**2 * 0.25 - mass_parton**2))
     phi = np.random.rand()*2*np.pi
     theta = np.random.rand()*2*np.pi
@@ -87,7 +91,7 @@ def create_triplet(baryon, mass_parton=0.01):
 
 
     # LRF Calculation of Energy
-    mass_baryon = baryon[-1]
+    mass_baryon = baryon[-4]
 
     r = np.sqrt(((mass_baryon/3.)**2 - mass_parton**2))
     phi = np.random.rand()*2*np.pi # offset
