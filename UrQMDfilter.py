@@ -43,9 +43,9 @@ def make_partonlist(baryons, mesons):
     """ Takes list of baryons and mesons and creates list of partons """
     partons = []
     for baryon in baryons:
-        partons.extend(create_triplet(baryon[:-1]))
+        partons.extend(create_triplet(baryon[:-2]))
     for meson in mesons:
-        partons.extend(create_duplet(meson[:-1]))
+        partons.extend(create_duplet(meson[:-2]))
     return partons
 
 
