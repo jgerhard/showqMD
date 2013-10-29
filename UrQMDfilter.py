@@ -36,16 +36,16 @@ def separate_hadrons(event, meson_itypes =range(-140,-100)+range(100,141), baryo
     
     mesons = [map(lambda(x): float(x), line.split()[1:10]) for line in mesons_strings]
     baryons = [map(lambda(x): float(x), line.split()[1:10]) for line in baryons_strings]
-    mesons = filter(lambda(x): x[-1] != 0, mesons) # UrQMD denotes photons as mass=0 mesons
+    mesons = filter(lambda(x): x[-2] != 0, mesons) # UrQMD denotes photons as mass=0 mesons
     return baryons, mesons
     
 def make_partonlist(baryons, mesons):
     """ Takes list of baryons and mesons and creates list of partons """
     partons = []
     for baryon in baryons:
-        partons.extend(create_triplet(baryon[:-2]))
+        partons.extend(create_triplet(baryon))
     for meson in mesons:
-        partons.extend(create_duplet(meson[:-2]))
+        partons.extend(create_duplet(meson))
     return partons
 
 
