@@ -27,31 +27,41 @@ def lorentz(beta, fourVector, EPS = 1e-5):
 def create_anti(particle):
     return [1 - x for x in particle[:-1]] + [1]
 
+def select_partons(meson):
+    return u, d
+
 def create_duplet(meson):
     """ Takes position, momentum, mass, itype, isospin, and charge from meson
     and creates parton antiparton duplet with same
     energy in LRF and same momentum of CF.
     Masses of partons are chosen according to itype and charge,
     colour chosen at random """
-
+    
     # position for both partons is same as meson's position in cf
     pos = np.array(meson[0:3] + [0], dtype=np.float32)
 
     # LRF Calculation of Energy
     mass_meson = meson[-4]
-    r = np.sqrt((mass_meson**2 * 0.25 - mass_parton**2))
-    phi = np.random.rand()*2*np.pi
+    mass_parton1, mass_parton2 = select_partons(meson)
+
+    bias = (mass_meson**2 + mass_parton1**2 - mass_parton2**2)/(2*mass_meson**2) 
+    # part of meson energy for different partons, such that the sum of both 3-momenta 
+    # is zero and the energy is exactly the meson energy at rest
+    
+    phi = np.random.rand()*2*np.pi # random direction for momenta
     theta = np.random.rand()*2*np.pi
     
-
+    r = np.sqrt(bias**2 * mass_meson**2 - mass_parton1**2)
     p_parton1 = np.array([0,0,0,0], dtype=np.float32)
-    p_parton1[0] = mass_meson * 0.5
+    p_parton1[0] = bias * mass_meson
     p_parton1[1] = r * np.sin(phi) * np.cos(theta)
     p_parton1[2] = r * np.sin(phi) * np.sin(theta)
     p_parton1[3] = r * np.cos(phi)
 
+
+    r = np.sqrt((1-bias)**2 * mass_meson**2 - mass_parton2**2)
     p_parton2 = np.array([0,0,0,0], dtype=np.float32)
-    p_parton2[0] = mass_meson * 0.5
+    p_parton2[0] = (1-bias)*mass_meson
     p_parton2[1] = -r * np.sin(phi) * np.cos(theta)
     p_parton2[2] = -r * np.sin(phi) * np.sin(theta)
     p_parton2[3] = -r * np.cos(phi)
@@ -63,8 +73,8 @@ def create_duplet(meson):
     p_parton1 = lorentz(-v_meson, p_parton1)
     p_parton2 = lorentz(-v_meson, p_parton2)
     
-    p_parton1 = np.hstack((p_parton1[1:4], [mass_parton])) # (E, px, py, pz) |-> (px, py, pz, m)
-    p_parton2 = np.hstack((p_parton2[1:4], [mass_parton]))
+    p_parton1 = np.hstack((p_parton1[1:4], [mass_parton1])) # (E, px, py, pz) |-> (px, py, pz, m)
+    p_parton2 = np.hstack((p_parton2[1:4], [mass_parton2]))
     # Chose color at random
 
     c_parton1 = choice([x + [1] for x in [ [0,0,1], [0,1,0], [1,0,0] ] ])
