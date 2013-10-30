@@ -27,8 +27,11 @@ def lorentz(beta, fourVector, EPS = 1e-5):
 def create_anti(particle):
     return [1 - x for x in particle[:-1]] + [1]
 
-def select_partons(meson):
+def mesons_partons(meson):
     return u, d
+
+def baryons_partons(baryon):
+    return u, u, d
 
 def create_duplet(meson):
     """ Takes position, momentum, mass, itype, isospin, and charge from meson
@@ -42,7 +45,7 @@ def create_duplet(meson):
 
     # LRF Calculation of Energy
     mass_meson = meson[-4]
-    mass_parton1, mass_parton2 = select_partons(meson)
+    mass_parton1, mass_parton2 = mesons_partons(meson)
 
     bias = (mass_meson**2 + mass_parton1**2 - mass_parton2**2)/(2*mass_meson**2) 
     # part of meson energy for different partons, such that the sum of both 3-momenta 
@@ -90,7 +93,7 @@ def create_duplet(meson):
 
     return parton1, parton2
 
-def create_triplet(baryon, mass_parton=0.01):
+def create_triplet(baryon):
     """ Takes position, momentum, and mass from baryon
     and creates parton triplet with same
     energy in LRF and same momentum of CF.
@@ -102,6 +105,7 @@ def create_triplet(baryon, mass_parton=0.01):
 
     # LRF Calculation of Energy
     mass_baryon = baryon[-4]
+    mass_parton1, mass_parton2, mass_parton3 = baryons_partons(baryon)
 
     r = np.sqrt(((mass_baryon/3.)**2 - mass_parton**2))
     phi = np.random.rand()*2*np.pi # offset
