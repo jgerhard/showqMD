@@ -62,7 +62,7 @@ def create_duplet(meson):
     p_parton1[3] = r * np.cos(phi)
 
 
-    r = np.sqrt((1-bias)**2 * mass_meson**2 - mass_parton2**2)
+    # r = np.sqrt((1-bias)**2 * mass_meson**2 - mass_parton2**2) #additional calculation not necessary, is exactly the same as above
     p_parton2 = np.array([0,0,0,0], dtype=np.float32)
     p_parton2[0] = (1-bias)*mass_meson
     p_parton2[1] = -r * np.sin(phi) * np.cos(theta)
@@ -94,10 +94,11 @@ def create_duplet(meson):
     return parton1, parton2
 
 def create_triplet(baryon):
-    """ Takes position, momentum, and mass from baryon
-    and creates parton triplet with same
-    energy in LRF and same momentum of CF.
-    Standard mass of parton is 0.01 GeV"""
+    """ Takes position, momentum, mass, itype, isospin, and charge from baryon
+    and creates parton triplet with same energy in LRF and same momentum of CF.
+    Masses of partons are chosen according to itype and charge,
+    colour chosen at random """
+
 
     # position for partons is same as baryon's position in cf
     pos = np.array(baryon[0:3] + [0], dtype=np.float32)
