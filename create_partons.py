@@ -75,9 +75,9 @@ def create_duplet(meson):
     
     p_parton1 = np.hstack((p_parton1[1:4], [mass_parton1])) # (E, px, py, pz) |-> (px, py, pz, m)
     p_parton2 = np.hstack((p_parton2[1:4], [mass_parton2]))
-    # Chose color at random
 
-    c_parton1 = choice([x + [1] for x in [ [0,0,1], [0,1,0], [1,0,0] ] ])
+    # Chose color at random
+    c_parton1 = choice([x + [1] for x in [ [0,0,1], [0,1,0], [1,0,0], [1,1,0], [1,0,1], [0,1,1] ] ])
     c_parton2 = create_anti(c_parton1)
     c_parton1 = np.array(c_parton1, dtype=np.float32)
     c_parton2 = np.array(c_parton2, dtype=np.float32)
