@@ -3,7 +3,7 @@ from random import choice, shuffle
 
 u, d, s = 0.0023, 0.0048, 0.095 # quark masses in GeV
 
-MesonDict = {(-1,101):(d,u), (1,101):(u,d), (-1,104):(d,u), (1,104):(u,d), (-1,106):(s,u), (1,106):(u,s)
+MesonDict = {(-1,101):(d,u), (1,101):(u,d), (-1,104):(d,u), (1,104):(u,d), (-1,106):(s,u), (1,106):(u,s),
              (-1,-101):(u,d), (1,-101):(d,u), (-1,-104):(u,d), (1,-104):(d,u), (-1,-106):(u,s), (1,-106):(s,u)} # antimatter
 
 DeltaDict = {-1:(d,d,d), 0:(d,d,u), 1 : (u,u,d), 2:(u,u,u)}
