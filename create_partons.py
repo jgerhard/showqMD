@@ -34,7 +34,11 @@ def mesons_partons(meson):
     try:
         return MesonDict[(ityp, charge)]
     except KeyError:
-        return (u,u)
+        if abs(ityp) >= 106:    # strangeness case
+            return random.choice([(d,s), (s,d)])
+        else:                   # no strangeness
+            return random.choice([(u,u), (d,d)])
+            
         
 
 def baryons_partons(baryon):
