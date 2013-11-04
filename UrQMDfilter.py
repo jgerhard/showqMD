@@ -1,5 +1,4 @@
 from create_partons import create_triplet, create_duplet
-from pprint import pprint
 import numpy as np
 
 def readfile(filename, header=True):
