@@ -1,10 +1,13 @@
 import numpy as np
-from random import choice
+from random import choice, shuffle
 
 u, d, s = 0.0023, 0.0048, 0.095 # quark masses in GeV
 
-MesonDict = {(-1,101):(d,u), (1,101):(u,d), (-1,104):(d,u), (1,104):(u,d), (-1,106):(s,u), (1,106):(u,s)}
+MesonDict = {(-1,101):(d,u), (1,101):(u,d), (-1,104):(d,u), (1,104):(u,d), (-1,106):(s,u), (1,106):(u,s)
+             (-1,-101):(u,d), (1,-101):(d,u), (-1,-104):(u,d), (1,-104):(d,u), (-1,-106):(u,s), (1,-106):(s,u)} # antimatter
 
+DeltaDict = {-1:(d,d,d), 0:(d,d,u), 1 : (u,u,d), 2:(u,u,u)}
+SigmaDict = {-1:(d,d,s), 0:(u,d,s), 1:(u,u,s)}
 
 def Mass(fMom):
     return np.sqrt(fMom[0]**2 - fMom[1]**2 -fMom[2]**2 -fMom[3]**2)
@@ -30,20 +33,28 @@ def create_anti(particle):
     return [1 - x for x in particle[:-1]] + [1]
 
 def mesons_partons(meson):
-    ityp, charge = meson[-2], meson[-1]
+    ityp, charge = meson[-3], meson[-1]
     try:
         return MesonDict[(ityp, charge)]
     except KeyError:
         if abs(ityp) >= 106:    # strangeness case
-            return random.choice([(d,s), (s,d)])
+            return choice([(d,s), (s,d)])
         else:                   # no strangeness
-            return random.choice([(u,u), (d,d)])
+            return choice([(u,u), (d,d)])
             
         
 
 def baryons_partons(baryon):
-    mean = 1./3. * (u + u + d)
-    return mean, mean, mean
+    ityp, charge = baryon[-3], baryon[-1]
+    
+    if ityp in range(-26,27):
+        (parton1, parton2, parton3) = DeltaDict[charge]
+    else:
+        (parton1, parton2, parton3) = SigmaDict[charge]
+
+    mean = 1./3. * (parton1 + parton2 + parton3)
+    return (mean, mean, mean)
+
 
 def create_duplet(meson):
     """ Takes position, momentum, mass, itype, isospin, and charge from meson
@@ -118,7 +129,7 @@ def create_triplet(baryon):
 
     # LRF Calculation of Energy
     mass_baryon = baryon[-4]
-    mass_parton1, mass_parton2, mass_parton3 = baryons_partons(baryon)
+    (mass_parton1, mass_parton2, mass_parton3) = baryons_partons(baryon)
     mass_parton = mass_parton1
 
     r = np.sqrt(((mass_baryon/3.)**2 - mass_parton**2))
@@ -159,14 +170,19 @@ def create_triplet(baryon):
     p_parton2 = np.hstack((p_parton2[1:4], [mass_parton])) # (E, px, py, pz) |-> (px, py, pz, m)
     p_parton3 = np.hstack((p_parton3[1:4], [mass_parton])) # (E, px, py, pz) |-> (px, py, pz, m)
 
-    # set color r,g,b (momenta at random, though no bias introduced)
+    # set color 
 
-    c_parton1 = np.array([0,0,1,1], dtype=np.float32)
-    c_parton2 = np.array([0,1,0,1], dtype=np.float32)
-    c_parton3 = np.array([1,0,0,1], dtype=np.float32)
+    colors = [x + [1] for x in [ [0,0,1], [0,1,0], [1,0,0] ]]
+    shuffle(colors)
+    c_parton1 = colors[0]
+    c_parton2 = colors[1]
+    c_parton3 = colors[2]
+    if (baryon[-3] < 0):        # anti particles
+        c_parton1 = create_anti(c_parton1)
+        c_parton2 = create_anti(c_parton2)
+        c_parton3 = create_anti(c_parton3)
 
     # return each parton as np.array
-
     parton1 = [pos, p_parton1, c_parton1]
     parton2 = [pos, p_parton2, c_parton2]
     parton3 = [pos, p_parton3, c_parton3]
