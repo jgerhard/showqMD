@@ -31,7 +31,8 @@ def mesons_partons(meson):
     return u, d
 
 def baryons_partons(baryon):
-    return u, u, d
+    mean = 1./3. * (u + u + d)
+    return mean, mean, mean
 
 def create_duplet(meson):
     """ Takes position, momentum, mass, itype, isospin, and charge from meson
@@ -107,6 +108,7 @@ def create_triplet(baryon):
     # LRF Calculation of Energy
     mass_baryon = baryon[-4]
     mass_parton1, mass_parton2, mass_parton3 = baryons_partons(baryon)
+    mass_parton = mass_parton1
 
     r = np.sqrt(((mass_baryon/3.)**2 - mass_parton**2))
     phi = np.random.rand()*2*np.pi # offset
