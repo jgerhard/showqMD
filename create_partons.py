@@ -3,6 +3,8 @@ from random import choice
 
 u, d, s = 0.0023, 0.0048, 0.095 # quark masses in GeV
 
+MesonDict = {(-1,101):(d,u), (1,101):(u,d), (-1,104):(d,u), (1,104):(u,d), (-1,106):(s,u), (1,106):(u,s)}
+
 
 def Mass(fMom):
     return np.sqrt(fMom[0]**2 - fMom[1]**2 -fMom[2]**2 -fMom[3]**2)
@@ -28,7 +30,12 @@ def create_anti(particle):
     return [1 - x for x in particle[:-1]] + [1]
 
 def mesons_partons(meson):
-    return u, d
+    ityp, charge = meson[-2], meson[-1]
+    try:
+        return MesonDict[(ityp, charge)]
+    except KeyError:
+        return (u,u)
+        
 
 def baryons_partons(baryon):
     mean = 1./3. * (u + u + d)
@@ -46,7 +53,7 @@ def create_duplet(meson):
 
     # LRF Calculation of Energy
     mass_meson = meson[-4]
-    mass_parton1, mass_parton2 = mesons_partons(meson)
+    (mass_parton1, mass_parton2) = mesons_partons(meson)
 
     bias = (mass_meson**2 + mass_parton1**2 - mass_parton2**2)/(2*mass_meson**2) 
     # part of meson energy for different partons, such that the sum of both 3-momenta 
