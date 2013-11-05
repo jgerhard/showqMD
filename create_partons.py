@@ -127,11 +127,18 @@ def create_triplet(baryon):
     pos = np.array(baryon[0:3] + [0], dtype=np.float32)
 
 
-    # LRF Calculation of Energy
+    # LRF calculation of 4-momentum of partons
     mass_baryon = baryon[-4]
     (mass_parton1, mass_parton2, mass_parton3) = baryons_partons(baryon)
-    mass_parton = mass_parton1
 
+    u = sqrt(1./9. * mass_baryon**2 - mass_parton1**2)
+    d = sqrt(1./9. * mass_baryon**2 - mass_parton2**2)
+    s = sqrt(1./9. * mass_baryon**2 - mass_parton3**2)
+    # first calculate 2d three momentum vectors with sum zero and 
+    # length u,d,s (kinetic energy of mass defect for each parton)
+    # vectors are: pu = [ 0,  -u]
+    #              pd = [ x, y-u]
+    #              ps = [-x,  -y]
 
     r = np.sqrt(((mass_baryon/3.)**2 - mass_parton**2))
     phi = np.random.rand()*2*np.pi # offset
@@ -191,3 +198,35 @@ def create_triplet(baryon):
     return parton1, parton2, parton3
 
     
+def old_lrf_calculation(baryon, mass_parton=0.01):
+    # LRF calculation of 4-momentum of partons
+    mass_baryon = baryon[-4]
+
+    r = np.sqrt(((mass_baryon/3.)**2 - mass_parton**2))
+    phi = np.random.rand()*2*np.pi # offset
+    theta = np.random.rand()*2*np.pi
+
+    alpha = phi 
+
+    p_parton1 = np.array([0,0,0,0], dtype=np.float32)
+    p_parton1[0] = mass_baryon/3.
+    p_parton1[1] = r * np.sin(alpha) * np.cos(theta)
+    p_parton1[2] = r * np.sin(alpha) * np.sin(theta)
+    p_parton1[3] = r * np.cos(alpha)
+
+    alpha += 2./3. *  np.pi 
+
+    p_parton2 = np.array([0,0,0,0], dtype=np.float32)
+    p_parton2[0] = mass_baryon/3.
+    p_parton2[1] = r * np.sin(alpha) * np.cos(theta)
+    p_parton2[2] = r * np.sin(alpha) * np.sin(theta)
+    p_parton2[3] = r * np.cos(alpha)
+
+    alpha += 2./3. * np.pi
+
+    p_parton3 = np.array([0,0,0,0], dtype=np.float32) 
+    p_parton3[0] = mass_baryon/3.
+    p_parton3[1] = r * np.sin(alpha) * np.cos(theta)
+    p_parton3[2] = r * np.sin(alpha) * np.sin(theta)
+    p_parton3[3] = r * np.cos(alpha)
+
