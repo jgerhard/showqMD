@@ -1,5 +1,5 @@
 import numpy as np
-from numpy import cos, sin
+from numpy import sin, cos, sqrt
 from random import choice, shuffle
 
 u, d, s = 0.0023, 0.0048, 0.095 # quark masses in GeV
@@ -137,7 +137,7 @@ def create_triplet(baryon):
     s = sqrt(1./9. * mass_baryon**2 - mass_parton3**2)
     # first calculate 2d 3-momentum vectors with sum zero and 
     # length u,d,s (kinetic energy of mass defect for each parton)
-    # vectors are: pu = [ 0,  -u]
+    # vectors are: pu = [ 0,  u]
     #              pd = [ x, y-u]
     #              ps = [-x,  -y]
 
@@ -152,12 +152,12 @@ def create_triplet(baryon):
     theta = np.random.rand()*2*np.pi
 
 
-    # [0,-u, 0] |-> [-u * (cos(phi)sin(psi)+sin(phi)sin(theta)cos(psi)),...]
+    # [0,u, 0] |-> [u * (cos(phi)sin(psi)+sin(phi)sin(theta)cos(psi)),...]
     p_parton1 = np.array([0,0,0,0], dtype=np.float32)
     p_parton1[0] = mass_baryon/3.
-    p_parton1[1] = -u * (cos(phi)*sin(psi)+sin(phi)*sin(theta)*cos(psi))
-    p_parton1[2] = -u * (cos(phi)*cos(psi)-sin(phi)*sin(theta)*sin(psi))
-    p_parton1[3] = -u * (-sin(phi)*cos(theta)) 
+    p_parton1[1] = u * (cos(phi)*sin(psi)+sin(phi)*sin(theta)*cos(psi))
+    p_parton1[2] = u * (cos(phi)*cos(psi)-sin(phi)*sin(theta)*sin(psi))
+    p_parton1[3] = u * (-sin(phi)*cos(theta)) 
 
     print p_parton1
 
@@ -178,18 +178,19 @@ def create_triplet(baryon):
     p_parton3[3] = (-x) * sin(theta) + (-y) * (-sin(phi)*cos(theta)) 
 
     print p_parton3
-    print(" ")
+    print("------------------------")
     print(p_parton1 + p_parton2 + p_parton3)
-
+    print(" ")
+    print(" ")
     v_baryon = np.array(baryon[4:7]) / baryon[3]
 
     p_parton1 = lorentz(-v_baryon, p_parton1)
     p_parton2 = lorentz(-v_baryon, p_parton2)
     p_parton3 = lorentz(-v_baryon, p_parton3)
 
-    p_parton1 = np.hstack((p_parton1[1:4], [mass_parton])) # (E, px, py, pz) |-> (px, py, pz, m)
-    p_parton2 = np.hstack((p_parton2[1:4], [mass_parton])) # (E, px, py, pz) |-> (px, py, pz, m)
-    p_parton3 = np.hstack((p_parton3[1:4], [mass_parton])) # (E, px, py, pz) |-> (px, py, pz, m)
+    p_parton1 = np.hstack((p_parton1[1:4], [mass_parton1])) # (E, px, py, pz) |-> (px, py, pz, m)
+    p_parton2 = np.hstack((p_parton2[1:4], [mass_parton2])) # (E, px, py, pz) |-> (px, py, pz, m)
+    p_parton3 = np.hstack((p_parton3[1:4], [mass_parton3])) # (E, px, py, pz) |-> (px, py, pz, m)
 
     # set color 
 
