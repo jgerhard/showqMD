@@ -132,6 +132,7 @@ def create_triplet(baryon):
     (mass_parton1, mass_parton2, mass_parton3) = baryons_partons(baryon)
     mass_parton = mass_parton1
 
+
     r = np.sqrt(((mass_baryon/3.)**2 - mass_parton**2))
     phi = np.random.rand()*2*np.pi # offset
     theta = np.random.rand()*2*np.pi
