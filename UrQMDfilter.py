@@ -50,9 +50,9 @@ def make_partonlist(baryons, mesons):
 
     
 if __name__ == "__main__":
+    np.random.seed(42)
     events = readfile("test.f14",header=False)
     baryons, mesons = separate_hadrons(events[0]) # take only first event
     liste = make_partonlist(baryons, mesons)
-    print liste
     np.savetxt("baryons.csv", baryons, delimiter=",")
     np.savetxt("mesons.csv", mesons, delimiter=",")
