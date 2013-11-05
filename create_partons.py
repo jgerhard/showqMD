@@ -53,8 +53,9 @@ def baryons_partons(baryon):
     else:
         (parton1, parton2, parton3) = SigmaDict[charge]
 
-    mean = 1./3. * (parton1 + parton2 + parton3)
-    return (mean, mean, mean)
+    return (parton1, parton2, parton3)
+    # mean = 1./3. * (parton1 + parton2 + parton3)
+    # return (mean, mean, mean)
 
 
 def create_duplet(meson):
@@ -146,11 +147,11 @@ def create_triplet(baryon):
 
     # then do an arbitrary 3d rotation by phi, psi and theta.
     # embedd pu, pd, ps via [a,b] |-> [a,b,0]
-    
+    # this should provide isotropy!
+
     phi = np.random.rand()*2*np.pi 
     psi = np.random.rand()*2*np.pi 
     theta = np.random.rand()*2*np.pi
-
 
     # [0,u, 0] |-> [u * (cos(phi)sin(psi)+sin(phi)sin(theta)cos(psi)),...]
     p_parton1 = np.array([0,0,0,0], dtype=np.float32)
@@ -159,7 +160,6 @@ def create_triplet(baryon):
     p_parton1[2] = u * (cos(phi)*cos(psi)-sin(phi)*sin(theta)*sin(psi))
     p_parton1[3] = u * (-sin(phi)*cos(theta)) 
 
-    print p_parton1
 
     # [x,y-u, 0] |-> ...
     p_parton2 = np.array([0,0,0,0], dtype=np.float32)
@@ -168,7 +168,6 @@ def create_triplet(baryon):
     p_parton2[2] = x * (-cos(theta)*sin(psi)) + (y-u) * (cos(phi)*cos(psi)-sin(phi)*sin(theta)*sin(psi))
     p_parton2[3] = x * sin(theta) + (y-u) * (-sin(phi)*cos(theta)) 
 
-    print p_parton2
 
     # [-x, -y, 0] |-> ...
     p_parton3 = np.array([0,0,0,0], dtype=np.float32) 
@@ -177,11 +176,8 @@ def create_triplet(baryon):
     p_parton3[2] = (-x) * (-cos(theta)*sin(psi)) + (-y) * (cos(phi)*cos(psi)-sin(phi)*sin(theta)*sin(psi))
     p_parton3[3] = (-x) * sin(theta) + (-y) * (-sin(phi)*cos(theta)) 
 
-    print p_parton3
-    print("------------------------")
-    print(p_parton1 + p_parton2 + p_parton3)
-    print(" ")
-    print(" ")
+
+    # boost into computational frame
     v_baryon = np.array(baryon[4:7]) / baryon[3]
 
     p_parton1 = lorentz(-v_baryon, p_parton1)
@@ -195,7 +191,7 @@ def create_triplet(baryon):
     # set color 
 
     colors = [x + [1] for x in [ [0,0,1], [0,1,0], [1,0,0] ]]
-    shuffle(colors)
+    shuffle(colors)             # isotropy in colour-space
     c_parton1 = colors[0]
     c_parton2 = colors[1]
     c_parton3 = colors[2]
