@@ -176,7 +176,6 @@ def create_triplet(baryon):
     p_parton3[2] = (-x) * (-cos(theta)*sin(psi)) + (-y) * (cos(phi)*cos(psi)-sin(phi)*sin(theta)*sin(psi))
     p_parton3[3] = (-x) * sin(theta) + (-y) * (-sin(phi)*cos(theta)) 
 
-
     # boost into computational frame
     v_baryon = np.array(baryon[4:7]) / baryon[3]
 
