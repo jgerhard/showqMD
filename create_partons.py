@@ -1,4 +1,5 @@
 import numpy as np
+from numpy import cos, sin
 from random import choice, shuffle
 
 u, d, s = 0.0023, 0.0048, 0.095 # quark masses in GeV
@@ -134,39 +135,51 @@ def create_triplet(baryon):
     u = sqrt(1./9. * mass_baryon**2 - mass_parton1**2)
     d = sqrt(1./9. * mass_baryon**2 - mass_parton2**2)
     s = sqrt(1./9. * mass_baryon**2 - mass_parton3**2)
-    # first calculate 2d three momentum vectors with sum zero and 
+    # first calculate 2d 3-momentum vectors with sum zero and 
     # length u,d,s (kinetic energy of mass defect for each parton)
     # vectors are: pu = [ 0,  -u]
     #              pd = [ x, y-u]
     #              ps = [-x,  -y]
 
-    r = np.sqrt(((mass_baryon/3.)**2 - mass_parton**2))
-    phi = np.random.rand()*2*np.pi # offset
+    y = (s**2 + u**2 - d**2)/(2*u)
+    x = sqrt(s**2 - y**2)
+
+    # then do an arbitrary 3d rotation by phi, psi and theta.
+    # embedd pu, pd, ps via [a,b] |-> [a,b,0]
+    
+    phi = np.random.rand()*2*np.pi 
+    psi = np.random.rand()*2*np.pi 
     theta = np.random.rand()*2*np.pi
 
-    alpha = phi 
 
+    # [0,-u, 0] |-> [-u * (cos(phi)sin(psi)+sin(phi)sin(theta)cos(psi)),...]
     p_parton1 = np.array([0,0,0,0], dtype=np.float32)
     p_parton1[0] = mass_baryon/3.
-    p_parton1[1] = r * np.sin(alpha) * np.cos(theta)
-    p_parton1[2] = r * np.sin(alpha) * np.sin(theta)
-    p_parton1[3] = r * np.cos(alpha)
+    p_parton1[1] = -u * (cos(phi)*sin(psi)+sin(phi)*sin(theta)*cos(psi))
+    p_parton1[2] = -u * (cos(phi)*cos(psi)-sin(phi)*sin(theta)*sin(psi))
+    p_parton1[3] = -u * (-sin(phi)*cos(theta)) 
 
-    alpha += 2./3. *  np.pi 
+    print p_parton1
 
+    # [x,y-u, 0] |-> ...
     p_parton2 = np.array([0,0,0,0], dtype=np.float32)
     p_parton2[0] = mass_baryon/3.
-    p_parton2[1] = r * np.sin(alpha) * np.cos(theta)
-    p_parton2[2] = r * np.sin(alpha) * np.sin(theta)
-    p_parton2[3] = r * np.cos(alpha)
+    p_parton2[1] = x * ( cos(theta)*cos(psi)) + (y-u) * (cos(phi)*sin(psi)+sin(phi)*sin(theta)*cos(psi))
+    p_parton2[2] = x * (-cos(theta)*sin(psi)) + (y-u) * (cos(phi)*cos(psi)-sin(phi)*sin(theta)*sin(psi))
+    p_parton2[3] = x * sin(theta) + (y-u) * (-sin(phi)*cos(theta)) 
 
-    alpha += 2./3. * np.pi
+    print p_parton2
 
+    # [-x, -y, 0] |-> ...
     p_parton3 = np.array([0,0,0,0], dtype=np.float32) 
     p_parton3[0] = mass_baryon/3.
-    p_parton3[1] = r * np.sin(alpha) * np.cos(theta)
-    p_parton3[2] = r * np.sin(alpha) * np.sin(theta)
-    p_parton3[3] = r * np.cos(alpha)
+    p_parton3[1] = (-x) * ( cos(theta)*cos(psi)) + (-y) * (cos(phi)*sin(psi)+sin(phi)*sin(theta)*cos(psi))
+    p_parton3[2] = (-x) * (-cos(theta)*sin(psi)) + (-y) * (cos(phi)*cos(psi)-sin(phi)*sin(theta)*sin(psi))
+    p_parton3[3] = (-x) * sin(theta) + (-y) * (-sin(phi)*cos(theta)) 
+
+    print p_parton3
+    print(" ")
+    print(p_parton1 + p_parton2 + p_parton3)
 
     v_baryon = np.array(baryon[4:7]) / baryon[3]
 
