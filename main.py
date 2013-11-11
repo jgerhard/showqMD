@@ -9,7 +9,7 @@ maxnum = 6000
 #time step for integration
 dt = 1e-3                      # 1e-4 leaves mass of meson at hadronization constant for all timesteps
 #number of timesteps
-run_time = 5                  # run time in fm/c
+run_time = 20                  # run time in fm/c
 save_time = .1               # timesteps to be saved in fm/c
 
 class Simulation():

@@ -83,11 +83,11 @@ def create_candidates(all_partons, max_dist = 1.0, MAXITER = None):
     mesons = []
     baryons = []
     if (not MAXITER):
-        MAXITER = 2 * len(all_partons)
+        MAXITER = 10 * len(all_partons)
 
     max_dist = 0.0
     while(all_partons and (max_dist < 3.0)):
-        max_dist += 0.1
+        max_dist += 0.5
         print("%f fm/c distance max"%max_dist)
         group(all_partons, mesons, baryons, max_dist, MAXITER)
         
